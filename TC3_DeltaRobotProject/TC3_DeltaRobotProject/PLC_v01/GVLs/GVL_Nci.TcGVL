@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <GVL Name="GVL_Nci" Id="{460bcdc1-1d94-4046-a94d-ec9b97e1a1a7}">
+    <Declaration><![CDATA[VAR_GLOBAL
+	stNciToPLC	AT%I*		: NCTOPLC_NCICHANNEL_REF;
+	stPlcToNci	AT%Q*		: PLCTONC_NCICHANNEL_REF;
+	
+	bMFunc					: ARRAY[0..cnMaxMFuncNumber] OF BOOL;
+	bQuitMFunc				: ARRAY[0..cnMaxMFuncNumber] OF BOOL;
+	bFastMFunc				: ARRAY[0..cnMaxMFuncNumber] OF BOOL;
+	
+	fNciRParamsWrite		: ARRAY[cnStartIndexWriteRParam..cnEndIndexWriteRParam] OF LREAL;
+	fNciRParamsRead			: ARRAY[cnStartIndexReadRParam..cnEndIndexReadRParam] OF LREAL;
+	stNciToolParams			: ARRAY[1..cnMaxToolNumber] OF ToolDesc;
+END_VAR
+VAR_GLOBAL CONSTANT
+	cnMaxMFuncNumber		: INT	:= 159;
+	cnStartIndexWriteRParam	: INT	:= 0;
+	cnEndIndexWriteRParam	: INT	:= 100;
+	cnStartIndexReadRParam	: INT	:= 101;
+	cnEndIndexReadRParam	: INT	:= 201;
+	cnMaxToolNumber			: INT	:= 10;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

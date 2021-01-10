@@ -1,0 +1,221 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <POU Name="FB_AxisControl" Id="{1bc3936e-0ef9-4752-86ea-8b2dbfb01c8d}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_AxisControl
+VAR_IN_OUT
+	stAxisInterface		: ST_AxisInterface;
+	stAxisRef			: AXIS_REF;
+END_VAR
+VAR
+	fbPower				: MC_Power;
+	fbReset				: MC_Reset;
+	fbDriveReset		: FB_SoeReset;
+	fbHome				: MC_Home;
+	fbReadStatus		: MC_ReadStatus;
+	fbMoveAbsoluteP1	: MC_MoveAbsolute;
+	fbMoveAbsoluteP2	: MC_MoveAbsolute;
+	fbStop				: MC_Stop;
+	fbJog				: MC_Jog;
+	fbResetTrig			: R_TRIG;
+	fbDriveResetTrig	: R_TRIG;
+	fbHomeFallTrig		: F_TRIG;
+	fbMoveFallTrig		: F_TRIG;
+	nState				: INT;
+	bAxisOk				: BOOL;
+	fOldSetPos			: LREAL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+(* Enable Axis		*)
+fbPower(
+	Axis			:= stAxisRef, 
+	Enable			:= stAxisInterface.In.xEnable, 
+	Enable_Positive	:= stAxisInterface.In.xEnable, 
+	Enable_Negative	:= stAxisInterface.In.xEnable, 
+	Override		:= stAxisInterface.In.fOverride,
+	Status			=> stAxisInterface.Out.xEnabled );
+(***********************************************************)
+
+(* Reset Axis 		*)
+fbResetTrig(CLK:= stAxisInterface.In.xReset);
+fbReset(
+	Axis			:= stAxisRef, 
+	Execute			:= fbResetTrig.Q );
+(***********************************************************)
+	
+(* Reset Drive		*)
+fbDriveResetTrig(CLK:= stAxisInterface.In.xDriveReset);
+fbDriveReset(
+	NetId			:= '', 
+	Execute			:= fbDriveResetTrig.Q, 
+	Timeout			:= T#5S, 
+	Axis			:= stAxisRef );
+(***********************************************************)
+	
+(* Read Status		*)
+stAxisRef.ReadStatus();
+fbReadStatus(
+	Axis			:= stAxisRef, 
+	Enable			:= TRUE, 
+	Error			=> stAxisInterface.Out.xAxisError, 
+	ErrorID			=> stAxisInterface.Out.nAxisErrId );
+	
+bAxisOk				:= (NOT stAxisInterface.Out.xAxisError) AND stAxisInterface.Out.xEnabled;
+(***********************************************************)
+	
+(* Home				*)
+fbHome(
+	Axis			:= stAxisRef, 
+	Execute			:= stAxisInterface.In.xHome AND bAxisOk, 
+	Position		:= stAxisInterface.In.fHomePos, 
+	bCalibrationCam	:= stAxisInterface.In.xHomeSensor, 
+	Done			=> stAxisInterface.Out.xHomed);
+(***********************************************************)
+	
+(* Jog				*)
+fbJog(
+	Axis			:= stAxisRef, 
+	JogForward		:= stAxisInterface.In.xJogFw AND bAxisOk, 
+	JogBackwards	:= stAxisInterface.In.xJogBw AND bAxisOk, 
+	Mode			:= MC_JOGMODE_CONTINOUS, 
+	Velocity		:= stAxisInterface.In.fJogVelo );
+(***********************************************************)
+	
+(* Move	Absolute	*)
+fbMoveAbsoluteP1(
+	Axis			:= stAxisRef, 
+	Execute			:= fbMoveAbsoluteP1.Execute AND bAxisOk, 
+	Position		:= fbMoveAbsoluteP1.Position, 
+	Velocity		:= fbMoveAbsoluteP1.Velocity, 
+	Acceleration	:= fbMoveAbsoluteP1.Acceleration, 
+	Deceleration	:= fbMoveAbsoluteP1.Deceleration, 
+	Jerk			:= fbMoveAbsoluteP1.Jerk,
+	BufferMode   	:= MC_Aborting );
+	
+fbMoveAbsoluteP2(
+	Axis			:= stAxisRef, 
+	Execute			:= fbMoveAbsoluteP2.Execute AND bAxisOk, 
+	Position		:= fbMoveAbsoluteP2.Position, 
+	Velocity		:= fbMoveAbsoluteP2.Velocity, 
+	Acceleration	:= fbMoveAbsoluteP2.Acceleration, 
+	Deceleration	:= fbMoveAbsoluteP2.Deceleration, 
+	Jerk			:= fbMoveAbsoluteP2.Jerk,
+	BufferMode   	:= MC_Aborting );
+
+CASE nState OF
+	
+0:
+	stAxisInterface.Out.xMoveDone	:= FALSE;
+	fbMoveAbsoluteP1.Execute		:= FALSE;
+	fbMoveAbsoluteP2.Execute		:= FALSE;
+	
+	IF bAxisOK AND stAxisInterface.In.xMove THEN
+		fbMoveAbsoluteP1.Position		:= stAxisInterface.In.fSetPos;
+		fbMoveAbsoluteP1.Velocity		:= stAxisInterface.In.fSetVelo;
+		fbMoveAbsoluteP1.Acceleration	:= stAxisInterface.In.fSetAcc;
+		fbMoveAbsoluteP1.Deceleration	:= stAxisInterface.In.fSetDec;
+		fOldSetPos						:= stAxisInterface.In.fSetPos;
+		fbMoveAbsoluteP1.Execute		:= TRUE;
+		nState	:= 10;
+	END_IF
+	
+10:
+	IF fbMoveAbsoluteP1.Done THEN
+		stAxisInterface.Out.xMoveDone	:= TRUE;
+		nState	:= 30;
+	ELSE
+		IF fOldSetPos <> stAxisInterface.In.fSetPos THEN
+			stAxisInterface.Out.xMoveDone	:= FALSE;
+			fbMoveAbsoluteP1.Execute		:= FALSE;
+			fbMoveAbsoluteP2.Position		:= stAxisInterface.In.fSetPos;
+			fbMoveAbsoluteP2.Velocity		:= stAxisInterface.In.fSetVelo;
+			fbMoveAbsoluteP2.Acceleration	:= stAxisInterface.In.fSetAcc;
+			fbMoveAbsoluteP2.Deceleration	:= stAxisInterface.In.fSetDec;
+			fOldSetPos						:= stAxisInterface.In.fSetPos;
+			fbMoveAbsoluteP2.Execute		:= TRUE;
+			nState	:= 20;
+		END_IF
+	END_IF
+	
+20:
+	IF fbMoveAbsoluteP2.Done THEN
+		stAxisInterface.Out.xMoveDone	:= TRUE;
+		nState	:= 30;
+	ELSE
+		IF fOldSetPos <> stAxisInterface.In.fSetPos THEN
+			stAxisInterface.Out.xMoveDone	:= FALSE;
+			fbMoveAbsoluteP2.Execute		:= FALSE;
+			fbMoveAbsoluteP1.Position		:= stAxisInterface.In.fSetPos;
+			fbMoveAbsoluteP1.Velocity		:= stAxisInterface.In.fSetVelo;
+			fbMoveAbsoluteP1.Acceleration	:= stAxisInterface.In.fSetAcc;
+			fbMoveAbsoluteP1.Deceleration	:= stAxisInterface.In.fSetDec;
+			fOldSetPos						:= stAxisInterface.In.fSetPos;
+			fbMoveAbsoluteP1.Execute		:= TRUE;
+			nState	:= 10;
+		END_IF
+	END_IF
+	
+30:
+	fbMoveAbsoluteP1.Execute		:= FALSE;
+	fbMoveAbsoluteP2.Execute		:= FALSE;
+	
+	IF NOT stAxisInterface.In.xMove THEN
+		stAxisInterface.Out.xMoveDone	:= FALSE;
+		nState	:= 0;
+	ELSE
+		IF fOldSetPos <> stAxisInterface.In.fSetPos THEN
+			stAxisInterface.Out.xMoveDone	:= FALSE;
+			nState	:= 10;
+		END_IF
+	END_IF
+
+END_CASE
+
+(***********************************************************)
+
+(* Stop				*)
+fbHomeFallTrig(CLK:= stAxisInterface.In.xHome);
+fbMoveFallTrig(CLK:= stAxisInterface.In.xMove);
+fbStop(
+	Axis			:= stAxisRef, 
+	Execute			:= fbMoveFallTrig.Q OR fbHomeFallTrig.Q);
+	
+(* Function Error	*)
+IF fbPower.Error THEN
+	stAxisInterface.Out.xFunctionError	:= fbPower.Error;
+	stAxisInterface.Out.nFunctionErrId	:= fbPower.ErrorID;
+ELSIF fbReset.Error THEN
+	stAxisInterface.Out.xFunctionError	:= fbReset.Error;
+	stAxisInterface.Out.nFunctionErrId	:= fbReset.ErrorID;
+ELSIF fbDriveReset.Error THEN
+	stAxisInterface.Out.xFunctionError	:= fbDriveReset.Error;
+	stAxisInterface.Out.nFunctionErrId	:= fbDriveReset.AdsErrId;
+ELSIF fbHome.Error THEN
+	stAxisInterface.Out.xFunctionError	:= fbHome.Error;
+	stAxisInterface.Out.nFunctionErrId	:= fbHome.ErrorID;
+ELSIF fbJog.Error THEN
+	stAxisInterface.Out.xFunctionError	:= fbJog.Error;
+	stAxisInterface.Out.nFunctionErrId	:= fbJog.ErrorID;
+ELSIF fbMoveAbsoluteP1.Error THEN
+	stAxisInterface.Out.xFunctionError	:= fbMoveAbsoluteP1.Error;
+	stAxisInterface.Out.nFunctionErrId	:= fbMoveAbsoluteP1.ErrorID;
+ELSIF fbMoveAbsoluteP2.Error THEN
+	stAxisInterface.Out.xFunctionError	:= fbMoveAbsoluteP2.Error;
+	stAxisInterface.Out.nFunctionErrId	:= fbMoveAbsoluteP2.ErrorID;
+ELSIF fbStop.Error THEN
+	stAxisInterface.Out.xFunctionError	:= fbStop.Error;
+	stAxisInterface.Out.nFunctionErrId	:= fbStop.ErrorID;
+ELSE
+	stAxisInterface.Out.xFunctionError	:= FALSE;
+	stAxisInterface.Out.nFunctionErrId	:= 0;
+END_IF
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_AxisControl">
+      <LineId Id="3" Count="184" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

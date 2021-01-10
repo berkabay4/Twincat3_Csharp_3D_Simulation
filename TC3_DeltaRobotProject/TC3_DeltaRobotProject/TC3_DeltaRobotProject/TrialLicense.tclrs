@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<TcLicenseInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2011/11/TcLicenseInfo">
+	<LicenseInfo>
+		<SystemId>{38AF4EB7-8D13-F52C-159B-EE6878639695}</SystemId>
+		<IssueTime>2019-09-19T12:24:00</IssueTime>
+		<ExpireTime>2019-09-27T00:00:00</ExpireTime>
+		<LicenseKey>76ff3d27cf5b16565f81ddd09f3dd3ae67088c8ac4a7206aed5e3dc8daf73c2df334d328f703a76a0d15e91852b4c53f22383b924797873a2a626c03549299b9c8189c66f5121cac5d0b7c7a8fce751129f17cb8d71dfeafaa5b191b5b10bf4effe4397d63b5134400cb7d993c44532bf8a4f3c69adda43c5d6b920c307d7a4c9c0e261b1837a68f23fbb586c78bd698c50d665d5e75277dd5f3df9ab486875813a0fcdb31221d10a08b7ede79f6b21709b5622ef6643c09767e65b516d3b8a589214b99710c14024786be0d1d390e9662d29e4ca6fbe3a5d3145309649192d9f12852bcd25b3881beb3f3ae32729cb25c249e0fe94d1e723685acdde162d1a1</LicenseKey>
+		<License>
+			<LicenseId>{DEA72F0A-9EA0-48F4-ABB5-766516202B8E}</LicenseId>
+			<Name>TC3 NC I</Name>
+			<OrderNo>TF5100</OrderNo>
+		</License>
+		<License>
+			<LicenseId>{B56E7280-5DD4-4AB8-8075-075DD69C1C3D}</LicenseId>
+			<Name>TC3 Kinematic Transformation L2</Name>
+			<OrderNo>TF5111</OrderNo>
+		</License>
+		<License>
+			<LicenseId>{C0BF0BC1-CBED-4D55-86DC-0706BF289DCE}</LicenseId>
+			<Name>TC3 Kinematic Transformation L1</Name>
+			<OrderNo>TF5110</OrderNo>
+		</License>
+		<License>
+			<LicenseId>{EDABAF2B-31BD-44EA-812D-3BEA277A1355}</LicenseId>
+			<Name>TC3 Kinematic Transformation L3</Name>
+			<OrderNo>TF5112</OrderNo>
+		</License>
+		<License>
+			<LicenseId>{BDCC0070-42D5-49AE-ABF1-1D4434813D60}</LicenseId>
+			<Name>TC3 OPC-UA</Name>
+			<OrderNo>TF6100</OrderNo>
+		</License>
+		<License>
+			<LicenseId>{A19036CF-A53B-4E3A-99FF-023EF5C4798B}</LicenseId>
+			<Name>TC3 NC PTP Axis</Name>
+			<Instances>10</Instances>
+		</License>
+		<License>
+			<LicenseId>{520DE751-9DB6-47CB-8240-BD5C466E7E64}</LicenseId>
+			<Name>TC3 NC PTP</Name>
+			<OrderNo>TF5000</OrderNo>
+		</License>
+	</LicenseInfo>
+</TcLicenseInfo>

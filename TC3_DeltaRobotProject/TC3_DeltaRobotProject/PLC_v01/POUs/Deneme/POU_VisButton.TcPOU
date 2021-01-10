@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.0">
+  <POU Name="POU_VisButton" Id="{7681f85b-4e97-401a-83c7-d4bd560bd69e}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM POU_VisButton
+VAR
+	
+xUp	:	BOOL;
+xDown	:	BOOL;
+
+yUp	:	BOOL;
+yDown	:	BOOL;
+
+zuP	:	BOOL;	
+zDown	:	BOOL;
+
+DecVal	:	LREAL;
+
+
+
+	xUpR_TRIG: R_TRIG;
+	xDownR_TRIG: R_TRIG;
+	yUpR_TRIG: R_TRIG;
+	yDownR_TRIG: R_TRIG;
+	zUpR_TRIG: R_TRIG;
+	zDownR_TRIG: R_TRIG;
+	BridgeValZ: LREAL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[	
+xUpR_TRIG(CLK:=xUp , Q=> );
+xDownR_TRIG(CLK:=xDown , Q=> );
+
+yUpR_TRIG(CLK:=yUp , Q=> );
+yDownR_TRIG(CLK:=yDown , Q=> );
+
+zUpR_TRIG(CLK:=zUp , Q=> );
+zDownR_TRIG(CLK:=zDown , Q=> );
+
+
+stAxisZ.In.fSetPos	:=	BridgeValZ;
+
+	//stAxisX.In.fSetPos;
+	//stAxisY.In.fSetPos;
+	//stAxisZ.In.fSetPos;
+
+IF xUpR_TRIG.Q	THEN
+	
+stAxisX.In.fSetPos	:=	stAxisX.In.fSetPos	+	10;
+
+
+ELSIF xDownR_TRIG.Q THEN
+	stAxisX.In.fSetPos	:=	stAxisX.In.fSetPos	-	10;
+END_IF
+
+
+
+IF yUpR_TRIG.Q	THEN
+	
+stAxisY.In.fSetPos	:=	stAxisY.In.fSetPos	+	10;
+
+
+ELSIF yDownR_TRIG.Q THEN
+	stAxisY.In.fSetPos	:=	stAxisY.In.fSetPos	-	10;
+END_IF
+
+
+
+
+IF zUpR_TRIG.Q	THEN
+	
+BridgeValZ	:=	BridgeValZ	+	10;
+
+
+ELSIF zDownR_TRIG.Q THEN
+	BridgeValZ	:=	BridgeValZ	-	10;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="POU_VisButton">
+      <LineId Id="31" Count="0" />
+      <LineId Id="77" Count="1" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="79" Count="1" />
+      <LineId Id="85" Count="0" />
+      <LineId Id="81" Count="1" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="65" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="32" Count="1" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="36" Count="1" />
+      <LineId Id="48" Count="1" />
+      <LineId Id="39" Count="4" />
+      <LineId Id="45" Count="2" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="51" Count="7" />
+      <LineId Id="60" Count="2" />
+      <LineId Id="50" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

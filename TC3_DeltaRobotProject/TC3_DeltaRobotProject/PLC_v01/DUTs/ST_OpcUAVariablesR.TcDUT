@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <DUT Name="ST_OpcUAVariablesR" Id="{17f71896-4413-4fbd-86b0-a44b87978f05}">
+    <Declaration><![CDATA[TYPE ST_OpcUAVariablesR :
+STRUCT
+	bEnableAllProcess	: BOOL;
+	bNciStart			: BOOL;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

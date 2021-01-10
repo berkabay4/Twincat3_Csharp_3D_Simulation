@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.0">
+  <POU Name="MAIN" Id="{2020bd6b-90a0-4fc7-9a1c-76bd8c902114}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	sFilePathName	: STRING := 'C:\TwinCAT\CNC\TestNci1.txt';
+	sErrorMessage	: STRING := '';
+	bOpen			: BOOL;
+	bClose 			: BOOL;
+	bSave 			: BOOL;
+	bNew			: BOOL;
+	nErrorCode		: USINT;
+	nLineNumber		: USINT;
+	bEnable: BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(*V03 	- 28.09.2017 13:40*)
+(*V03.1 - 10.02.2017 *)
+
+sErrorMessage	:= VisuFctTextEditorGetErrorText(usiErrCode := nErrorCode);
+
+PRG_NcControl();
+//PRG_MFuncControl();
+PRG_Kinematic();
+
+//PRG_Process();
+
+//PRG_OpcUA();
+
+
+IF bEnable THEN
+	stAxisM1_B.In.xEnable	:= TRUE;
+	stAxisM2_C.In.xEnable	:= TRUE;
+	stAxisM3_A.In.xEnable	:= TRUE;
+	stAxisX.In.xEnable	:= TRUE;
+	stAxisY.In.xEnable	:= TRUE;
+	stAxisZ.In.xEnable	:= TRUE;
+	
+	stAxisM1_B.In.fOverride	:= 100;
+	stAxisM2_C.In.fOverride	:= 100;
+	stAxisM3_A.In.fOverride	:= 100;
+	stAxisX.In.fOverride	:= 100;
+	stAxisY.In.fOverride	:= 100;
+	stAxisZ.In.fOverride	:= 100;
+ELSE
+	stAxisM1_B.In.xEnable	:= FALSE;
+	stAxisM2_C.In.xEnable	:= FALSE;
+	stAxisM3_A.In.xEnable	:= FALSE;
+	stAxisX.In.xEnable	:= FALSE;
+	stAxisY.In.xEnable	:= FALSE;
+	stAxisZ.In.xEnable	:= FALSE;
+END_IF
+
+stAxisX.In.fSetPos;
+stAxisY.In.fSetPos;
+stAxisZ.In.fSetPos;
+
+stAxisX.In.fSetVelo;
+stAxisY.In.fSetVelo;
+stAxisZ.In.fSetVelo;
+
+stAxisX.In.xMove;
+stAxisY.In.xMove;
+stAxisZ.In.xMove;
+
+
+AxisM1PosValue	:= AxisM1_B.NcToPlc.ActPos;
+AxisM2PosValue	:= AxisM2_C.NcToPlc.ActPos;
+AxisM3PosValue	:= AxisM3_A.NcToPlc.ActPos;
+
+AxisM1VeloValue	:= AxisM1_B.NcToPlc.ActVelo;
+AxisM2VeloValue	:= AxisM2_C.NcToPlc.ActVelo;
+AxisM3VeloValue	:= AxisM3_A.NcToPlc.ActVelo;
+
+
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="38" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="3" Count="5" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="10" Count="3" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="66" Count="3" />
+      <LineId Id="65" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="72" Count="1" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="75" Count="1" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="79" Count="4" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="84" Count="2" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="90" Count="1" />
+      <LineId Id="93" Count="2" />
+      <LineId Id="92" Count="0" />
+      <LineId Id="96" Count="1" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="98" Count="1" />
+      <LineId Id="102" Count="1" />
+      <LineId Id="108" Count="1" />
+      <LineId Id="104" Count="1" />
+      <LineId Id="101" Count="0" />
+      <LineId Id="100" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,343 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.0">
+  <POU Name="POU_Process_Deneme" Id="{96d46232-4b1f-462f-b400-9fcb212730d7}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM POU_Process_Deneme
+VAR
+	nStateProcess: INT;
+	bSystemStart: BOOL;
+	bSensor: BOOL;
+	T1: TON;
+	T2: TON;
+	rtrig_Obj: R_TRIG;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[		
+	stAxisM1_B.In.xEnable	:= TRUE;
+	stAxisM2_C.In.xEnable	:= TRUE;
+	stAxisM3_A.In.xEnable	:= TRUE;
+	
+	stAxisX.In.xEnable	:= TRUE;
+	stAxisY.In.xEnable	:= TRUE;
+	stAxisZ.In.xEnable	:= TRUE;
+		
+	stAxisM1_B.In.fOverride	:= 100;
+	stAxisM2_C.In.fOverride	:= 100;
+	stAxisM3_A.In.fOverride	:= 100;
+	
+	stAxisX.In.fOverride	:= 100;
+	stAxisY.In.fOverride	:= 100;
+	stAxisZ.In.fOverride	:= 100;
+	
+
+	
+CASE nStateProcess	OF
+	
+0:
+IF bSystemStart THEN
+
+
+	PRG_Kinematic.bExecuteKinConfigGroup	:=	TRUE;
+	stAxisX.In.xMove	:=	TRUE;
+	stAxisY.In.xMove	:=	TRUE;
+	stAxisZ.In.xMove	:=	TRUE;
+
+			
+	stAxisX.In.fSetVelo	:=50;
+	stAxisY.In.fSetVelo	:=50;
+	stAxisZ.In.fSetVelo	:=50;
+
+	IF 
+	PRG_Kinematic.fbKinConfigGroup.bDone AND 
+	stAxisX.Out.xEnabled	AND
+	stAxisY.Out.xEnabled	AND
+	stAxisZ.Out.xEnabled	THEN
+	
+	
+
+		nStateProcess	:=	10;
+	
+	ELSIF	PRG_Kinematic.fbKinConfigGroup.bError THEN
+		nStateProcess	:=	1000;
+	END_IF	
+	
+END_IF
+
+10:
+GVL_Process_Deneme.bMovementDone	:=	FALSE;
+GVL_Process_Deneme.bDataComp	:=FALSE;
+
+
+IF	GVL_Process_Deneme.bSensor	THEN
+	
+	GVL_Process_Deneme.bMovementDone	:=	TRUE;
+	
+	stAxisX.In.fSetPos	:=	0;
+	stAxisY.In.fSetPos	:=	0;
+	stAxisZ.In.fSetPos	:=	-400;
+	
+
+	IF 	stAxisX.Out.xMoveDone	AND stAxisY.Out.xMoveDone	AND stAxisZ.Out.xMoveDone THEN 
+	
+	GVL_Process_Deneme.bCatch	:=	TRUE;
+	
+	GVL_Process_Deneme.bMovementDone	:=	FALSE;				//Malzeme Alındı
+
+
+	
+	nStateProcess	:=	20;
+	
+	ELSIF stAxisX.Out.xAxisError	OR
+	stAxisY.Out.xAxisError	OR
+	stAxisZ.Out.xAxisError	OR
+	stAxisM1_B.Out.xAxisError	OR
+	stAxisM2_C.Out.xAxisError	OR	
+	stAxisM3_A.Out.xAxisError	THEN
+
+	nStateProcess	:=	999;	
+	
+END_IF
+	
+	
+	
+END_IF
+
+20:
+
+stAxisX.In.fSetVelo	:=300;
+stAxisY.In.fSetVelo	:=300;
+stAxisZ.In.fSetVelo	:=300;
+
+
+stAxisZ.In.fSetPos	:=	-370;			//Alınan malzeme bırakılacağı konuma götürüldü
+stAxisY.In.fSetPos	:=	310;
+
+nStateProcess	:=	25;
+
+
+25:
+
+	IF  stAxisY.Out.xMoveDone	AND stAxisZ.Out.xMoveDone THEN 
+
+	
+	nStateProcess	:=	30;
+	
+	ELSIF stAxisX.Out.xAxisError	OR
+	stAxisY.Out.xAxisError	OR
+	stAxisZ.Out.xAxisError	OR
+	stAxisM1_B.Out.xAxisError	OR
+	stAxisM2_C.Out.xAxisError	OR	
+	stAxisM3_A.Out.xAxisError	THEN
+
+	nStateProcess	:=	999;	
+	
+END_IF
+	
+30:
+stAxisX.In.fSetVelo	:=50;
+stAxisY.In.fSetVelo	:=50;
+stAxisZ.In.fSetVelo	:=50;
+
+stAxisZ.In.fSetPos	:=	-400;		
+
+
+
+	IF stAxisZ.Out.xMoveDone THEN 
+
+	GVL_Process_Deneme.bDataComp	:=	TRUE;	// Malzeme bırakıldı
+	
+//	GVL_Process_Deneme.bMovementDone	:=	TRUE;
+
+	GVL_Process_Deneme.bCatch	:=	FALSE;
+	
+	
+	nStateProcess	:=	40;
+	
+	
+	ELSIF stAxisX.Out.xAxisError	OR
+	stAxisY.Out.xAxisError	OR
+	stAxisZ.Out.xAxisError	OR
+	stAxisM1_B.Out.xAxisError	OR
+	stAxisM2_C.Out.xAxisError	OR	
+	stAxisM3_A.Out.xAxisError	THEN
+
+	nStateProcess	:=	999;	
+	
+END_IF
+
+
+40:
+
+stAxisX.In.fSetVelo	:=1000;
+stAxisY.In.fSetVelo	:=1000;
+stAxisZ.In.fSetVelo	:=1000;
+
+
+stAxisX.In.fSetPos	:=	0;
+stAxisY.In.fSetPos	:=	0;
+stAxisZ.In.fSetPos	:=	-370;
+
+nStateProcess	:=	45;
+
+45:
+		
+	IF 	stAxisX.Out.xMoveDone	AND stAxisY.Out.xMoveDone	 THEN 
+
+
+	GVL_Process_Deneme.bDataComp	:=FALSE;
+		GVL_Process_Deneme.bMovementDone	:=FALSE;
+
+	
+	nStateProcess	:=	0;
+	
+	
+	ELSIF stAxisX.Out.xAxisError	OR
+	stAxisY.Out.xAxisError	OR
+	stAxisZ.Out.xAxisError	OR
+	stAxisM1_B.Out.xAxisError	OR
+	stAxisM2_C.Out.xAxisError	OR	
+	stAxisM3_A.Out.xAxisError	THEN
+
+	nStateProcess	:=	999;	
+	
+END_IF
+
+
+
+
+
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="POU_Process_Deneme">
+      <LineId Id="78" Count="3" />
+      <LineId Id="85" Count="0" />
+      <LineId Id="82" Count="1" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="72" Count="1" />
+      <LineId Id="86" Count="0" />
+      <LineId Id="74" Count="2" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="353" Count="1" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="15" Count="1" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="347" Count="0" />
+      <LineId Id="91" Count="0" />
+      <LineId Id="93" Count="2" />
+      <LineId Id="319" Count="4" />
+      <LineId Id="96" Count="0" />
+      <LineId Id="99" Count="0" />
+      <LineId Id="103" Count="0" />
+      <LineId Id="100" Count="2" />
+      <LineId Id="97" Count="0" />
+      <LineId Id="348" Count="0" />
+      <LineId Id="351" Count="0" />
+      <LineId Id="69" Count="1" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="194" Count="0" />
+      <LineId Id="190" Count="1" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="393" Count="1" />
+      <LineId Id="379" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="376" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="377" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="239" Count="0" />
+      <LineId Id="131" Count="0" />
+      <LineId Id="133" Count="0" />
+      <LineId Id="146" Count="0" />
+      <LineId Id="140" Count="0" />
+      <LineId Id="378" Count="0" />
+      <LineId Id="358" Count="0" />
+      <LineId Id="253" Count="0" />
+      <LineId Id="141" Count="0" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="145" Count="0" />
+      <LineId Id="139" Count="0" />
+      <LineId Id="198" Count="3" />
+      <LineId Id="197" Count="0" />
+      <LineId Id="195" Count="0" />
+      <LineId Id="205" Count="0" />
+      <LineId Id="204" Count="0" />
+      <LineId Id="202" Count="0" />
+      <LineId Id="132" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="403" Count="0" />
+      <LineId Id="326" Count="2" />
+      <LineId Id="324" Count="0" />
+      <LineId Id="252" Count="0" />
+      <LineId Id="251" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="247" Count="0" />
+      <LineId Id="110" Count="0" />
+      <LineId Id="255" Count="0" />
+      <LineId Id="250" Count="0" />
+      <LineId Id="249" Count="0" />
+      <LineId Id="105" Count="0" />
+      <LineId Id="244" Count="0" />
+      <LineId Id="241" Count="0" />
+      <LineId Id="125" Count="1" />
+      <LineId Id="216" Count="0" />
+      <LineId Id="207" Count="8" />
+      <LineId Id="130" Count="0" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="112" Count="0" />
+      <LineId Id="329" Count="2" />
+      <LineId Id="152" Count="0" />
+      <LineId Id="114" Count="0" />
+      <LineId Id="153" Count="0" />
+      <LineId Id="115" Count="1" />
+      <LineId Id="245" Count="0" />
+      <LineId Id="242" Count="0" />
+      <LineId Id="401" Count="0" />
+      <LineId Id="396" Count="0" />
+      <LineId Id="383" Count="0" />
+      <LineId Id="375" Count="0" />
+      <LineId Id="161" Count="1" />
+      <LineId Id="164" Count="0" />
+      <LineId Id="166" Count="0" />
+      <LineId Id="368" Count="0" />
+      <LineId Id="217" Count="9" />
+      <LineId Id="117" Count="0" />
+      <LineId Id="168" Count="1" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="333" Count="3" />
+      <LineId Id="332" Count="0" />
+      <LineId Id="314" Count="0" />
+      <LineId Id="313" Count="0" />
+      <LineId Id="171" Count="1" />
+      <LineId Id="318" Count="0" />
+      <LineId Id="315" Count="0" />
+      <LineId Id="317" Count="0" />
+      <LineId Id="316" Count="0" />
+      <LineId Id="174" Count="0" />
+      <LineId Id="246" Count="0" />
+      <LineId Id="173" Count="0" />
+      <LineId Id="387" Count="0" />
+      <LineId Id="390" Count="1" />
+      <LineId Id="385" Count="1" />
+      <LineId Id="179" Count="0" />
+      <LineId Id="384" Count="0" />
+      <LineId Id="227" Count="9" />
+      <LineId Id="119" Count="1" />
+      <LineId Id="237" Count="1" />
+      <LineId Id="123" Count="1" />
+      <LineId Id="12" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

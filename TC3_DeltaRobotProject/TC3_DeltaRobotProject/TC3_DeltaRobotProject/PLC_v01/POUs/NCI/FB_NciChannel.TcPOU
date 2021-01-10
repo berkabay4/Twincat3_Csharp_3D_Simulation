@@ -1,0 +1,588 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <POU Name="FB_NciChannel" Id="{45f51e3a-14aa-42a1-acf4-a0599b317e47}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_NciChannel
+VAR_INPUT
+	bEnable				: BOOL;
+	bStart				: BOOL;
+	bSingleMode			: BOOL;
+	bSingleModeStart	: BOOL;
+	fOverride			: LREAL;
+	nXAxisId			: UDINT;
+	nYAxisId			: UDINT;
+	nZAxisId			: UDINT;
+	sProgramPath		: STRING(255);
+	sSubroutinePath		: STRING(255);
+END_VAR
+VAR_IN_OUT
+	sNciToPLC			: NCTOPLC_NCICHANNEL_REF;
+	sPlcToNci			: PLCTONC_NCICHANNEL_REF;
+END_VAR
+VAR_OUTPUT
+	eNciChannelState	: E_NciChannelState;
+	bBuildGroupDone		: BOOL;
+	bSingleModeActive	: BOOL;
+	bProgramRunning		: BOOL;
+	bProgramStopped		: BOOL;
+	bProgramFinished	: BOOL;
+	bError				: BOOL;
+	nErrorId			: UDINT;
+END_VAR
+VAR
+	fbNciReset			: ItpResetEx2;
+	fbBuildGroup		: CfgBuildExt3DGroup;
+	fbSetSubroutinePath	: ItpSetSubroutinePathEx;
+	fbLoadProgram		: ItpLoadProgEx;
+	fbStartStop			: ItpStartStopEx;
+	fbEStop				: ItpEStopEx;
+	fbStepOnAfterEStop	: ItpStepOnAfterEStopEx;
+	fbConfirmMFunc		: ItpConfirmHsk;
+	fbClearGroup		: CfgReconfigGroup;
+	fbReadRParams		: ItpReadRParamsEx;
+	fbWriteRParams		: ItpWriteRParamsEx;
+	fbReadToolDesc		: ItpReadToolDescEx;
+	fbWriteToolDesc		: FB_NciWriteToolParams;
+	fbSingleBlock		: ItpSingleBlock;
+	nSingleMode			: E_ItpSingleBlockMode;
+	rTrigNext			: R_TRIG;
+	nItpState			: UDINT;
+	nState				: INT;
+	nLastState			: INT;
+	bConfirmMFunc		: BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(* Set NCI Channel Override	*)
+ItpSetOverridePercent(fOverridePercent:= fOverride, sPlcToNci:= sPlcToNci );
+
+(* Get Actual Channel State	*)
+nItpState			:= ItpGetStateInterpreter(sNciToPlc:= sNciToPlc);
+eNciChannelState	:= UDINT_TO_INT(nItpState);
+
+(* Single Mode Selection	*)
+IF bSingleMode THEN
+	nSingleMode	:= ItpSingleBlockIntp;
+ELSE
+	nSingleMode	:= ItpSingleBlockOff;
+END_IF
+
+
+CASE nState OF
+	
+0:
+	bBuildGroupDone		:= FALSE;
+	bSingleModeActive	:= FALSE;
+	bProgramRunning		:= FALSE;
+	bProgramStopped		:= FALSE;
+	bProgramFinished	:= FALSE;
+	bError				:= FALSE;
+	nErrorId			:= 0;
+	
+	IF bEnable THEN
+		nState		:= 10;
+		nLastState	:= nState;
+	END_IF
+	
+10:
+	(* Reset NCI First	*)
+	fbNciReset(
+		bExecute	:= TRUE, 
+		tTimeOut	:= T#500MS, 
+		sNciToPlc	:= sNciToPLC );
+		
+	IF NOT fbNciReset.bBusy AND NOT fbNciReset.bErr THEN
+		fbNciReset(bExecute := FALSE, sNciToPlc := sNciToPLC);
+		nState		:= 20;
+		nLastState	:= nState;
+	ELSIF fbNciReset.bErr THEN
+		fbNciReset(bExecute := FALSE, sNciToPlc := sNciToPLC);
+		bError		:= TRUE;
+		nErrorId	:= fbNciReset.nErrId;
+		nState		:= 9000;
+	END_IF
+	
+20:
+	(* Build NCI Group	*)
+	fbBuildGroup(
+		bExecute	:= TRUE, 
+		nGroupId	:= ItpGetGroupId(sNciToPlc:= sNciToPlc), 
+		nXAxisId	:= nXAxisId, 
+		nYAxisId	:= nYAxisId, 
+		nZAxisId	:= nZAxisId, 
+		tTimeOut	:= T#500MS );
+		
+	IF NOT fbBuildGroup.bBusy AND NOT fbBuildGroup.bErr THEN
+		fbBuildGroup(bExecute := FALSE);
+		bBuildGroupDone	:= TRUE;
+		nState		:= 30;
+		nLastState	:= nState;
+	ELSIF fbBuildGroup.bErr THEN
+		fbBuildGroup(bExecute := FALSE);
+		bError		:= TRUE;
+		nErrorId	:= fbBuildGroup.nErrId;
+		nState		:= 9000;
+	END_IF
+	
+30:
+	(* Set NCI Subroutine Path	*)
+	fbSetSubroutinePath(
+		bExecute	:= TRUE, 
+		sPath		:= sSubroutinePath, 
+		nLength		:= INT_TO_UDINT(LEN(sSubroutinePath)), 
+		tTimeOut	:= T#500MS, 
+		sNciToPlc	:= sNciToPLC);
+		
+	IF NOT fbSetSubroutinePath.bBusy AND NOT fbSetSubroutinePath.bErr THEN
+		fbSetSubroutinePath(bExecute := FALSE, sNciToPlc := sNciToPLC);
+		nState		:= 40;
+		nLastState	:= nState;
+	ELSIF fbSetSubroutinePath.bErr THEN
+		fbSetSubroutinePath(bExecute := FALSE, sNciToPlc := sNciToPLC);
+		bError		:= TRUE;
+		nErrorId	:= fbSetSubroutinePath.nErrId;
+		nState		:= 9000;
+	END_IF
+	
+40:
+	(* If start then jump to state 100*)
+	IF bEnable THEN
+		IF bStart THEN
+			nState		:= 100;
+			nLastState	:= nState;
+		END_IF
+	ELSE
+		nState		:= 300;
+		nLastState	:= nState;
+	END_IF
+	
+100:
+	(* Write R Params before load the program	*)
+	fbWriteRParams(
+		bExecute	:= TRUE, 
+		pAddr		:= ADR(fNciRParamsWrite), 
+		nIndex		:= cnStartIndexWriteRParam, 
+		nCount		:= (cnEndIndexWriteRParam - cnStartIndexWriteRParam) + 1, 
+		tTimeOut	:= T#200MS, 
+		sNciToPlc	:= sNciToPLC );	
+		
+	IF NOT fbWriteRParams.bBusy AND NOT fbWriteRParams.bErr THEN
+		fbWriteRParams( bExecute := FALSE, sNciToPlc := sNciToPLC);
+		nState		:= 110;
+		nLastState	:= nState;
+	ELSIF fbWriteRParams.bErr THEN
+		fbWriteRParams( bExecute := FALSE, sNciToPlc := sNciToPLC);
+		bError		:= TRUE;
+		nErrorId	:= fbWriteRParams.nErrId;
+		nState		:= 9000;
+	END_IF
+	
+110:
+	(* Write Tool Params before load the program	*)
+	fbWriteToolDesc(
+		bExecute	:= TRUE, 
+		sNciToPLC	:= sNciToPLC );
+		
+	IF fbWriteToolDesc.bDone THEN
+		fbWriteToolDesc(bExecute := FALSE, sNciToPlc := sNciToPLC);
+		nState		:= 120;
+		nLastState	:= nState;
+	ELSIF fbWriteToolDesc.bError THEN
+		fbWriteToolDesc(bExecute := FALSE, sNciToPlc := sNciToPLC);
+		bError		:= TRUE;
+		nErrorId	:= fbWriteToolDesc.nErrorId;
+		nState		:= 9000;
+	END_IF
+	
+120:
+	(* Load Program	*)
+	fbLoadProgram(
+		sNciToPlc	:= sNciToPlc, 
+		bExecute	:= TRUE, 
+		sPrg		:= sProgramPath, 
+		nLength		:= INT_TO_UDINT(LEN(sProgramPath)), 
+		tTimeOut	:= T#500MS);
+		
+	IF NOT fbLoadProgram.bBusy AND NOT fbLoadProgram.bErr THEN
+		fbLoadProgram(bExecute := FALSE, sNciToPlc := sNciToPLC);
+		nState		:= 130;
+		nLastState	:= nState;
+	ELSIF fbLoadProgram.bErr THEN
+		fbLoadProgram(bExecute := FALSE, sNciToPlc := sNciToPLC);
+		bError		:= TRUE;
+		nErrorId	:= fbLoadProgram.nErrId;
+		nState		:= 9000;
+	END_IF
+	
+130:
+	(* Be sure fbStartStop FALSE	*)
+	fbStartStop(
+		bStart		:= FALSE, 
+		bStop		:= FALSE, 
+		tTimeOut	:= T#500MS, 
+		sNciToPlc	:= sNciToPlc);
+
+	IF nItpState = NCI_INTERPRETER_READY THEN
+		nState		:= 140;
+		nLastState	:= nState;
+	ELSIF nItpState = NCI_INTERPRETER_ABORTED THEN
+		bError		:= TRUE;
+		nErrorId	:= 4711;
+		nState		:= 9000;
+	END_IF
+	
+140:
+	(* Set SingleBlock Mode		*)
+	fbSingleBlock(
+		bExecuteModeChange	:= TRUE, 
+		nMode				:= nSingleMode, 
+		bTriggerNext		:= FALSE, 
+		tTimeOut			:= T#100MS, 
+		sNciToPlc			:= sNciToPlc );
+	
+	rTrigNext(CLK:= FALSE);
+	
+	IF NOT fbSingleBlock.bBusy AND NOT fbSingleBlock.bErr THEN
+		fbSingleBlock(bExecuteModeChange := FALSE, sNciToPlc := sNciToPlc);
+		IF NOT bSingleMode THEN
+			nState		:= 150;
+			nLastState	:= nState;
+		ELSE
+			nState		:= 170;
+			nLastState	:= nState;
+		END_IF
+	ELSIF fbSingleBlock.bErr THEN
+		fbSingleBlock(bExecuteModeChange := FALSE, sNciToPlc := sNciToPlc);
+		bError		:= TRUE;
+		nErrorId	:= fbSingleBlock.nErrId;
+		nState		:= 9000;
+	END_IF
+	
+150:
+	(* If not single block mode run	*)
+	fbStartStop(
+		bStart		:= TRUE, 
+		bStop		:= FALSE, 
+		tTimeOut	:= T#500MS, 
+		sNciToPlc	:= sNciToPlc);
+		
+	IF NOT fbStartStop.bBusy AND NOT fbStartStop.bErr THEN
+		fbStartStop(bStart := FALSE, bStop := FALSE, sNciToPlc := sNciToPLC);
+		nState		:= 160;
+		nLastState	:= nState;
+	ELSIF fbStartStop.bErr THEN
+		fbStartStop(bStart := FALSE, bStop := FALSE, sNciToPlc := sNciToPLC);
+		bError		:= TRUE;
+		nErrorId	:= fbLoadProgram.nErrId;
+		nState		:= 9000;
+	END_IF
+	
+160:
+	(* Check if the channel running	*)
+	IF bEnable THEN
+		(* Check if the part program is really started!*)
+		(* If the part program finished without an error, 
+			then it switch back to ready state *)
+		IF nItpState <> NCI_INTERPRETER_READY THEN
+			bProgramRunning	:= TRUE;
+			nState		:= 200;
+			nLastState	:= nState;
+		END_IF
+	ELSE
+		nState		:= 300;
+		nLastState	:= nState;
+	END_IF
+	
+170:
+	(* Activate single block mode	*)
+	rTrigNext(CLK:= TRUE);
+
+	fbSingleBlock(
+		bExecuteModeChange	:= FALSE, 
+		nMode				:= nSingleMode, 
+		bTriggerNext		:= rTrigNext.Q, 
+		tTimeOut			:= T#100MS, 
+		sNciToPlc			:= sNciToPlc );
+		
+	IF nItpState = NCI_INTERPRETER_SINGLESTOP THEN
+		rTrigNext(CLK:= FALSE);
+		bSingleModeActive	:= TRUE;
+		nState		:= 180;
+		nLastState	:= nState;
+	END_IF
+	
+180:
+	(* With next click run the program line by line	*)
+	rTrigNext(CLK:= bSingleModeStart AND bSingleMode);
+
+	fbSingleBlock(
+		bExecuteModeChange	:= FALSE, 
+		nMode				:= nSingleMode, 
+		bTriggerNext		:= rTrigNext.Q, 
+		tTimeOut			:= T#100MS, 
+		sNciToPlc			:= sNciToPlc );
+	
+	IF nItpState = NCI_INTERPRETER_READY THEN
+		bProgramRunning		:= FALSE;
+		bProgramStopped		:= FALSE;
+		bProgramFinished	:= TRUE;
+		nState		:= 190;
+		nLastState	:= nState;
+	END_IF
+		
+	IF NOT bSingleMode THEN
+		nState		:= 190;
+		nLastState	:= nState;
+	END_IF
+	
+190:
+	(* Turn off the single block mode	*)
+	fbSingleBlock(
+		bExecuteModeChange	:= TRUE, 
+		nMode				:= ItpSingleBlockOff, 
+		bTriggerNext		:= FALSE, 
+		tTimeOut			:= T#100MS, 
+		sNciToPlc			:= sNciToPlc );
+		
+	IF NOT fbSingleBlock.bBusy AND NOT fbSingleBlock.bErr THEN
+		fbSingleBlock(bExecuteModeChange := FALSE, sNciToPlc := sNciToPlc);
+		bSingleModeActive	:= FALSE;
+		(* If program finished*)
+		IF bProgramFinished THEN
+			nState		:= 195;
+			nLastState	:= nState;
+		ELSE
+		(* If program not finished*)
+			bProgramRunning	:= TRUE;
+			nState		:= 200;
+			nLastState	:= nState;
+		END_IF
+	ELSIF fbSingleBlock.bErr THEN
+		fbSingleBlock(bExecuteModeChange := FALSE, sNciToPlc := sNciToPlc);
+		bError		:= TRUE;
+		nErrorId	:= fbSingleBlock.nErrId;
+		nState		:= 9000;
+	END_IF
+	
+195:
+	(* Check for start if TRUE	*)
+	IF NOT bStart THEN
+		bProgramFinished	:= FALSE;
+		nState		:= 310;
+		nLastState	:= nState;
+	END_IF
+	
+200:
+	(* Check if the program finished or stopped *)
+	IF bEnable THEN
+		IF (NOT bStart) THEN
+			IF (NOT bProgramFinished) THEN
+				bProgramStopped	:= TRUE;
+				nState		:= 210;
+				nLastState	:= nState;
+			ELSE
+				nState		:= 300;
+				nLastState	:= nState;
+			END_IF
+		ELSE
+			IF nItpState = NCI_INTERPRETER_READY OR nItpState = NCI_INTERPRETER_IDLE THEN
+				bProgramRunning		:= FALSE;
+				bProgramStopped		:= FALSE;
+				bProgramFinished	:= TRUE;
+			END_IF
+		END_IF
+	ELSE
+		bProgramRunning	:= FALSE;
+		bProgramStopped	:= FALSE;
+		nState		:= 300;
+		nLastState	:= nState;
+	END_IF
+
+210:
+	(* Stop the channel	*)
+	fbEStop(
+		sNciToPlc	:= sNciToPlc, 
+		bExecute	:= TRUE, 
+		fDec		:= 40000, 
+		fJerk		:= 400000, 
+		tTimeOut	:= T#500MS);
+		
+	IF NOT fbEStop.bBusy AND NOT fbEStop.bErr THEN
+		fbEStop(bExecute := FALSE, sNciToPlc := sNciToPLC);
+		nState		:= 220;
+		nLastState	:= nState;
+	ELSIF fbEStop.bErr THEN
+		fbEStop(bExecute := FALSE, sNciToPlc := sNciToPLC);
+		bError		:= TRUE;
+		nErrorId	:= fbEStop.nErrId;
+		nState		:= 9000;
+	END_IF
+
+220:
+	(* Decide to go on or clear the group	*)
+	IF bEnable THEN
+		IF bStart THEN
+			nState		:= 230;
+			nLastState	:= nState;
+		END_IF
+	ELSE
+		bProgramRunning	:= FALSE;
+		bProgramStopped	:= FALSE;
+		nState		:= 300;
+		nLastState	:= nState;
+	END_IF
+
+230:
+	(* Go on *)
+	fbStepOnAfterEStop(
+		bExecute	:= TRUE, 
+		tTimeOut	:= T#500MS, 
+		sNciToPlc	:= sNciToPlc);
+		
+	IF NOT fbStepOnAfterEStop.bBusy AND NOT fbStepOnAfterEStop.bErr THEN
+		fbStepOnAfterEStop(bExecute := FALSE, sNciToPlc := sNciToPLC);
+		bProgramStopped	:= FALSE;
+		nState		:= 200;
+		nLastState	:= nState;
+	ELSIF fbStepOnAfterEStop.bErr THEN
+		fbStepOnAfterEStop(bExecute := FALSE, sNciToPlc := sNciToPLC);
+		bError		:= TRUE;
+		nErrorId	:= fbStepOnAfterEStop.nErrId;
+		nState		:= 9000;
+	END_IF
+	
+300:
+	(* Program finished	*)
+	bProgramFinished	:= FALSE;
+	bProgramStopped		:= FALSE;
+	bProgramRunning		:= FALSE;
+
+	fbStartStop(
+		bStart		:= FALSE, 
+		bStop		:= TRUE, 
+		tTimeOut	:= T#500MS, 
+		sNciToPlc	:= sNciToPlc);
+		
+	IF NOT fbStartStop.bBusy AND NOT fbStartStop.bErr THEN
+		fbStartStop(bStart := FALSE, bStop := FALSE, sNciToPlc := sNciToPLC);
+		nState		:= 310;
+		nLastState	:= nState;
+	ELSIF fbStartStop.bErr THEN
+		fbStartStop(bStart := FALSE, bStop := FALSE, sNciToPlc := sNciToPLC);
+		bError		:= TRUE;
+		nErrorId	:= fbLoadProgram.nErrId;
+		nState		:= 9000;
+	END_IF
+
+310:
+	(* InCase of any error confirm M Functions	*)
+	IF (ItpGetHskMFunc(sNciToPlc:= sNciToPlc)) > 0 THEN
+		bConfirmMFunc	:= TRUE;
+	ELSE
+		bConfirmMFunc	:= FALSE;
+	END_IF
+	
+	fbConfirmMFunc(bExecute:= bConfirmMFunc, sNciToPlc:= sNciToPlc, sPlcToNci:= sPlcToNci);
+	
+	IF NOT fbConfirmMfunc.bBusy AND NOT fbConfirmMFunc.bErr THEN
+		fbConfirmMFunc(bExecute:= FALSE, sNciToPlc:= sNciToPlc, sPlcToNci:= sPlcToNci);
+		bConfirmMFunc	:= FALSE;
+		IF bEnable THEN
+			nState		:= 320;
+			nLastState	:= nState;
+		ELSE
+			nState		:= 400;
+			nLastState	:= nState;
+		END_IF
+	ELSIF fbConfirmMfunc.bErr THEN
+		fbConfirmMFunc(bExecute:= FALSE, sNciToPlc:= sNciToPlc, sPlcToNci:= sPlcToNci);
+		bConfirmMFunc	:= FALSE;
+		bError		:= TRUE;
+		nErrorId	:= fbStepOnAfterEStop.nErrId;
+		nState		:= 9000;
+	END_IF
+	
+320:
+	(* Reset Channel	*)
+	fbNciReset(
+		bExecute	:= TRUE, 
+		tTimeOut	:= T#500MS, 
+		sNciToPlc	:= sNciToPLC );
+		
+	IF NOT fbNciReset.bBusy AND NOT fbNciReset.bErr THEN
+		fbNciReset(bExecute := FALSE, sNciToPlc := sNciToPLC);
+		nState		:= 40;
+		nLastState	:= nState;
+	ELSIF fbNciReset.bErr THEN
+		fbNciReset(bExecute := FALSE, sNciToPlc := sNciToPLC);
+		bError		:= TRUE;
+		nErrorId	:= fbNciReset.nErrId;
+		nState		:= 9000;
+	END_IF
+	
+400:
+	(* Clear group	*)
+	fbClearGroup(
+		bExecute	:= TRUE, 
+		nGroupId	:= ItpGetGroupId(sNciToPlc:= sNciToPlc), 
+		tTimeOut	:= T#200MS);
+		
+	IF NOT fbClearGroup.bBusy AND NOT fbClearGroup.bErr THEN
+		fbClearGroup(bExecute := FALSE);
+		bBuildGroupDone	:= FALSE;
+		nState		:= 410;
+		nLastState	:= nState;
+	ELSIF fbClearGroup.bErr THEN
+		fbClearGroup(bExecute := FALSE);
+		bError		:= TRUE;
+		nErrorId	:= fbClearGroup.nErrId;
+		nState		:= 9000;
+	END_IF 
+	
+410:
+	(* Check for not enable and not start	*)
+	IF (NOT bEnable) AND (NOT bStart) THEN
+		nState		:= 0;
+		nLastState	:= nState;
+	END_IF
+	
+	
+9000:
+	(* Error happened	*)
+	IF (NOT bEnable) AND (NOT bStart) THEN
+		IF bBuildGroupDone THEN
+			nState		:= 9010;
+			nLastState	:= nState;
+		ELSE
+			nState		:= 0;
+			nLastState	:= nState;
+		END_IF
+	END_IF
+	
+9010:
+	 (* Clear group	*)
+	fbClearGroup(
+		bExecute	:= TRUE, 
+		nGroupId	:= ItpGetGroupId(sNciToPlc:= sNciToPlc), 
+		tTimeOut	:= T#200MS);
+		
+	IF NOT fbClearGroup.bBusy AND NOT fbClearGroup.bErr THEN
+		fbClearGroup(bExecute := FALSE);
+		bBuildGroupDone	:= FALSE;
+		nState		:= 0;
+		nLastState	:= nState;
+	ELSIF fbBuildGroup.bErr THEN
+		fbClearGroup(bExecute := FALSE);
+		bError		:= TRUE;
+		nErrorId	:= fbClearGroup.nErrId;
+		nState		:= 9000;
+	END_IF 
+	
+END_CASE
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_NciChannel">
+      <LineId Id="3" Count="525" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

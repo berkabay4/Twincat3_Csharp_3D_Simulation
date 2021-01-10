@@ -1,0 +1,925 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <POU Name="PRG_Process" Id="{949e1c29-c252-44c0-b1a3-0736d58391f9}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_Process
+VAR
+	bTempAllAxisEnable		: BOOL;	
+	bTempAllAxisReset		: BOOL;	
+	bTempAllAxisEnableHMI	: BOOL;
+	bInvisible				: BOOL := TRUE;
+	bMode					: BOOL;
+	bAutoMode				: BOOL;
+	bManualMode				: BOOL;
+	nStateEnable			: INT;
+		
+	nStateReset				: INT;
+	nStateFrame				: INT;
+	
+	nStateAutoMan			: INT;
+	nLastStateAutoMan		: INT;
+	tWaitEnable				: TON;
+	tWaitNciGroupDone		: TON;
+	
+	nStatePathChange		: INT;
+	
+	fbFindFileList			: FB_EnumFindFileList ;
+	   	sNetID     			: T_AmsNetID 	:= '';
+    	sPathName  			: T_MaxString 	:= 'C:\TwinCAT\CNC\*.nc';
+		arrFileList			: ARRAY[0..20] OF ST_FindFileEntry;
+   		bExecuteFindList	: BOOL;
+  
+	i						: INT;
+	arrFileNameList			: ARRAY[0..20] OF STRING;
+	nFileNameList			: INT;
+	nLastFileNameList		: INT;
+	nStateFileNameList		: INT;
+	bChangeFile				: BOOL;
+	bSelectFile				: BOOL;
+	bCancelSelectFile		: BOOL;
+	//Delta içerisindeki G codelarına göre degistirilecek
+	sFileName				: STRING := 'C:\TwinCAT\CNC\Beckhoff_Robot_Yatirimlari_2.NC';
+	sFileNameVisu			: STRING := 'Beckhoff_Robot_Yatirimlari_2.NC';
+	tUpdatePathList			: TON;		
+	
+	//Otomatik HMI Acılsın
+	ntStartHMI				: NT_StartProcess;
+	tTimerStartHMI			: TON;
+	
+	// Windows XP ve üzeri isletim sistemleri icin kullanilan FB
+	fbScreenOff		: FB_ScreenOnOff_Win7;
+		bScreenOff	: BOOL;
+		bDone		: BOOL;
+	tTimerScreenOff	: TON;
+		bOff		: BOOL;
+		
+	//Enable PLC or HMI 
+	nStateEnableHP	: INT;
+	nStateNciHP		: INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[ACT_EnableReset();
+ACT_NciPathChange();
+ACT_AxisSelectOnManualMode();
+ACT_AutoManualMode();
+ACT_FromTC3toTwinCATHMI();
+
+
+
+
+tTimerStartHMI(IN:= TRUE, PT:= T#10S);
+
+IF tTimerStartHMI.Q THEN 
+
+ntStartHMI(
+	NETID		:= , 
+	PATHSTR		:= 'C:\TwinCAT\3.1\Components\Plc\Tc3PlcHmi\Tc3PlcHmi.exe', 
+	DIRNAME		:= 'C:\TwinCAT\3.1\Components\Plc\Tc3PlcHmi', 
+	COMNDLINE	:= , 
+	START		:= TRUE, 
+	TMOUT		:= T#5S, 
+	BUSY		=> , 
+	ERR			=> , 
+	ERRID		=> );
+END_IF 
+
+tTimerScreenOff(IN:= bOff, PT:= T#5S);
+
+IF tTimerScreenOff.Q THEN 
+	bScreenOff	:= TRUE;
+	IF bDone THEN 
+		bScreenOff	:= FALSE;
+		bOff		:= FALSE;
+	END_IF
+END_IF
+
+fbScreenOff(
+	bScreenOff	:= bScreenOff , 
+	bDone		=> bDone );]]></ST>
+    </Implementation>
+    <Action Name="ACT_AutoManualMode" Id="{11841f3a-955a-4d55-a329-5d98184ac289}">
+      <Implementation>
+        <ST><![CDATA[//Otomatic-Manual Modelar arasındaki geçişlerde değişkenlerin ayarlanmasi
+IF VisuElems.CURRENTVISU = 'Visualization_AxesInfo_Manual' THEN 
+	GVL_Process.nAutoManMode	:= FALSE;
+ELSIF VisuElems.CURRENTVISU = 'Visualization_AxesInfo' THEN 
+	GVL_Process.nAutoManMode	:= TRUE;
+END_IF 
+
+CASE nStateAutoMan OF 
+0:	
+	IF GVL_Process.nAutoManMode THEN 
+		nLastStateAutoMan	:= nStateAutoMan;
+		nStateAutoMan		:= 50;
+	ELSE
+		nLastStateAutoMan	:= nStateAutoMan;
+		nStateAutoMan		:= 150;
+	END_IF
+	
+50:
+	IF (NOT stAxisM1_B.Out.xAxisError) AND 
+		(NOT stAxisM2_C.Out.xAxisError) AND 
+		(NOT stAxisM3_A.Out.xAxisError) AND 
+		(NOT stAxisX.Out.xAxisError) AND 
+		(NOT stAxisY.Out.xAxisError) AND 
+		(NOT stAxisZ.Out.xAxisError) AND 
+		(NOT stAxisM2_C.Out.xAxisError) AND
+		(NOT stAxisM1_B.Out.xDriveError) AND 
+ 		(NOT stAxisM2_C.Out.xDriveError) AND
+		(NOT stAxisM3_A.Out.xDriveError) AND
+		(NOT stAxisX.Out.xDriveError) AND
+		(NOT stAxisY.Out.xDriveError) AND
+		(NOT stAxisZ.Out.xDriveError) THEN 
+		nStateAutoMan		:= 60;
+	ELSE
+		//Error Durumunda Reset State ine gönderilecek
+		nLastStateAutoMan	:= nStateAutoMan;
+		nStateAutoMan		:= 900;
+	END_IF 
+
+60:
+	GVL_Process.bAllAxesEnablePLC	:= TRUE;//GVL_Process.bAllAxesEnable 	:= TRUE;
+	tWaitEnable(IN:= TRUE, PT:= T#250MS);
+	IF tWaitEnable.Q THEN 
+		tWaitEnable(IN:= FALSE);
+		nStateAutoMan	:= 65;
+	END_IF
+
+65:
+	IF stAxisM1_B.Out.xEnabled AND 
+		stAxisM2_C.Out.xEnabled AND 
+		stAxisM3_A.Out.xEnabled AND 
+		stAxisX.Out.xEnabled AND 
+		stAxisY.Out.xEnabled AND 
+		stAxisZ.Out.xEnabled THEN 
+		PRG_Kinematic.bExecuteKinConfigGroup	:=FALSE;
+		nStateAutoMan	:= 70;
+	ELSE
+	 	//Error Durumunda Reset State ine gönderilecek
+		nLastStateAutoMan	:= nStateAutoMan;
+		nStateAutoMan		:= 900;
+	END_IF
+	
+70:
+	IF NOT PRG_Kinematic.fbKinConfigGroup.bError THEN 
+		PRG_Kinematic.bCartesianMode			:= TRUE;
+		PRG_Kinematic.bExecuteKinConfigGroup	:= TRUE;
+		IF PRG_Kinematic.fbKinConfigGroup.bDone THEN
+			PRG_Kinematic.bExecuteKinConfigGroup	:= FALSE; 
+			nStateAutoMan	:= 80;
+		END_IF
+	ELSE
+		//Error Durumunda Reset State ine gönderilecek
+		nLastStateAutoMan	:= nStateAutoMan;
+		nStateAutoMan		:= 900;
+	END_IF
+
+80:
+	tWaitNciGroupDone(IN:= TRUE, PT:= T#1S);
+	IF NOT PRG_NcControl.bNciError THEN 
+		PRG_NcControl.bNciEnable	:= TRUE;
+		IF PRG_NcControl.bBuildGroupDone THEN 
+			nStateAutoMan	:= 90;
+		ELSIF tWaitNciGroupDone.Q THEN 				//KONTROL ET
+			tWaitNciGroupDone(IN:= FALSE); 
+			PRG_NcControl.bNciEnable	:= FALSE;
+			nStateAutoMan	:= 0;
+		END_IF
+	ELSE 
+		//Error Durumunda Reset State ine gönderilecek
+		nLastStateAutoMan	:= nStateAutoMan;
+		nStateAutoMan		:= 900;
+	END_IF
+	
+90:
+	//Auto Mode Dan manual a geçme
+	IF NOT GVL_Process.nAutoManMode THEN 
+		IF PRG_NcControl.bProgramRunning 
+			AND NOT PRG_NcControl.bProgramStopped
+			AND NOT PRG_NcControl.bProgramFinished THEN 
+				PRG_NcControl.bNciStart		:= FALSE; //GVL_Process.bNciStartPLC	:= FALSE; 		
+		END_IF
+		nStateAutoMan				:= 100;	
+	END_IF
+
+100:
+	IF NOT PRG_NcControl.bNciError THEN 
+		nStateAutoMan	:= 110;
+	ELSE
+		//Error Durumunda Reset State ine gönderilecek
+		nLastStateAutoMan	:= nStateAutoMan;
+		nStateAutoMan		:= 900;
+	END_IF
+	
+110:
+	IF NOT PRG_NcControl.bProgramRunning 
+		OR PRG_NcControl.bProgramStopped THEN 
+		PRG_NcControl.bNciStart		:= FALSE; //GVL_Process.bNciStartPLC	:= FALSE; 
+		PRG_NcControl.bNciEnable	:= FALSE;
+		nStateAutoMan				:= 150;
+	END_IF
+		
+150:
+	IF (NOT stAxisM1_B.Out.xAxisError) AND 
+		(NOT stAxisM2_C.Out.xAxisError) AND 
+		(NOT stAxisM3_A.Out.xAxisError) AND 
+		(NOT stAxisX.Out.xAxisError) AND 
+		(NOT stAxisY.Out.xAxisError) AND 
+		(NOT stAxisZ.Out.xAxisError) AND 
+		(NOT stAxisM2_C.Out.xAxisError) AND
+		(NOT stAxisM1_B.Out.xDriveError) AND 
+ 		(NOT stAxisM2_C.Out.xDriveError) AND
+		(NOT stAxisM3_A.Out.xDriveError) AND
+		(NOT stAxisX.Out.xDriveError) AND
+		(NOT stAxisY.Out.xDriveError) AND
+		(NOT stAxisZ.Out.xDriveError) THEN 
+		nStateAutoMan		:= 160;
+	ELSE
+		//Error Durumunda Reset State ine gönderilecek
+		nLastStateAutoMan	:= nStateAutoMan;
+		nStateAutoMan		:= 900;
+	END_IF 	
+
+160:
+	GVL_Process.bAllAxesEnablePLC	:= TRUE; //GVL_Process.bAllAxesEnable	:= TRUE;
+	tWaitEnable(IN:= TRUE, PT:= t#250ms);
+	IF tWaitEnable.Q THEN 
+		tWaitEnable(IN:= FALSE);
+		nStateAutoMan	:= 165;
+	END_IF
+
+165:
+	IF stAxisM1_B.Out.xEnabled AND 
+		stAxisM2_C.Out.xEnabled AND 
+		stAxisM3_A.Out.xEnabled AND 
+		stAxisX.Out.xEnabled AND 
+		stAxisY.Out.xEnabled AND 
+		stAxisZ.Out.xEnabled THEN 
+		PRG_Kinematic.bExecuteKinConfigGroup	:=FALSE;
+		nStateAutoMan	:= 170;
+	ELSE
+	 	//Error Durumunda Reset State ine gönderilecek
+		nLastStateAutoMan	:= nStateAutoMan;
+		nStateAutoMan		:= 900;
+	END_IF
+	
+170:
+	IF NOT PRG_Kinematic.fbKinConfigGroup.bError THEN 
+		PRG_Kinematic.bCartesianMode			:= TRUE;
+		PRG_Kinematic.bExecuteKinConfigGroup	:= TRUE;
+		IF PRG_Kinematic.fbKinConfigGroup.bDone THEN 
+			PRG_Kinematic.bExecuteKinConfigGroup	:= FALSE;
+			nStateAutoMan							:= 180;
+		END_IF
+	ELSE
+		//Error Durumunda Reset State ine gönderilecek
+		nLastStateAutoMan	:= nStateAutoMan;
+		nStateAutoMan		:= 900;
+	END_IF
+	
+180:
+	//Manual dan Auto ya geçme
+	IF GVL_Process.nAutoManMode THEN 
+		nStateAutoMan	:= 50;
+	END_IF
+	
+900:
+//Error State
+	IF (NOT stAxisM1_B.Out.xAxisError) AND 
+		(NOT stAxisM2_C.Out.xAxisError) AND 
+		(NOT stAxisM3_A.Out.xAxisError) AND 
+		(NOT stAxisX.Out.xAxisError) AND 
+		(NOT stAxisY.Out.xAxisError) AND 
+		(NOT stAxisZ.Out.xAxisError) AND 
+		(NOT stAxisM2_C.Out.xAxisError) AND
+		(NOT stAxisM1_B.Out.xDriveError) AND 
+ 		(NOT stAxisM2_C.Out.xDriveError) AND
+		(NOT stAxisM3_A.Out.xDriveError) AND
+		(NOT stAxisX.Out.xDriveError) AND
+		(NOT stAxisY.Out.xDriveError) AND
+		(NOT stAxisZ.Out.xDriveError) THEN 
+		nStateAutoMan	:= 910;
+	END_IF 
+
+910:
+	IF PRG_Kinematic.fbKinConfigGroup.bError THEN 
+		PRG_Kinematic.bExecuteKinResetGroup	:= TRUE;
+		nStateAutoMan						:= 920;
+	ELSE
+		nStateAutoMan						:= 950;
+	END_IF
+	
+920:
+	IF PRG_Kinematic.fbKinConfigGroup.bError THEN 
+		PRG_Kinematic.bExecuteKinResetGroup	:= FALSE;
+		nStateAutoMan						:= 950;
+	END_IF
+	
+950:
+	IF GVL_Process.nAutoManMode THEN 
+		nStateAutoMan	:= 50;
+	ELSE
+		nStateAutoMan	:= 150;
+	END_IF
+
+END_CASE]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ACT_AxisSelectOnManualMode" Id="{8f7118d0-174b-4791-98c9-04b95666b14b}">
+      <Implementation>
+        <ST><![CDATA[//HMI da Manual Ekrandan Eksen Seçimi Adimlari
+IF NOT GVL_Process.bManualSelectX
+	AND NOT GVL_Process.bManualSelectY
+	AND NOT GVL_Process.bManualSelectZ THEN 
+		GVL_Process.bManualSelectX	:= TRUE;
+END_IF
+
+CASE nStateFrame OF 
+
+0:
+	GVL_Process.bManualSelectY	:= FALSE;
+	GVL_Process.bManualSelectZ	:= FALSE;	
+	GVL_Process.nSizeSelectX	:= 35;
+	GVL_Process.nSizeSelectY	:= 27;
+	GVL_Process.nSizeSelectZ	:= 27;
+	nStateFrame					:= 5;
+5:
+	IF GVL_Process.bManualSelectY THEN 
+		nStateFrame	:= 10;
+	ELSIF GVL_Process.bManualSelectZ THEN 
+		nStateFrame	:= 20;
+	END_IF
+10:
+	GVL_Process.bManualSelectX	:= FALSE;
+	GVL_Process.bManualSelectZ	:= FALSE;	
+	GVL_Process.nSizeSelectX	:= 27;
+	GVL_Process.nSizeSelectY	:= 35;
+	GVL_Process.nSizeSelectZ	:= 27;
+	nStateFrame					:= 15;
+15:
+	IF GVL_Process.bManualSelectX THEN 
+		nStateFrame	:= 0;
+	ELSIF GVL_Process.bManualSelectZ THEN 
+		nStateFrame	:= 20;
+	END_IF
+20:
+	GVL_Process.bManualSelectX	:= FALSE;
+	GVL_Process.bManualSelectY	:= FALSE;	
+	GVL_Process.nSizeSelectX	:= 27;
+	GVL_Process.nSizeSelectY	:= 27;
+	GVL_Process.nSizeSelectZ	:= 35;
+	nStateFrame					:= 25;
+25:
+	IF GVL_Process.bManualSelectX THEN 
+		nStateFrame	:= 0;
+	ELSIF GVL_Process.bManualSelectY THEN 
+		nStateFrame	:= 10;
+	END_IF
+
+END_CASE]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ACT_EnableReset" Id="{c1d14d85-a35f-4292-8040-0e39284b2b57}">
+      <Implementation>
+        <ST><![CDATA[//All Axes Enable 
+// bTemp.. degiskeni bir kerelik enable kesme isleminde kullanıldı
+(*IF bTempAllAxisEnable AND NOT GVL_Process.bAllAxesEnable THEN 
+	nStateEnable	:= 0;
+END_IF*)
+
+CASE nStateEnable OF 
+0:
+	IF GVL_Process.bAllAxesEnable THEN 
+		stAxisX.In.xEnable		:= TRUE;
+		stAxisY.In.xEnable		:= TRUE;
+		stAxisZ.In.xEnable		:= TRUE;
+		stAxisM1_B.In.xEnable	:= TRUE;
+		stAxisM2_C.In.xEnable	:= TRUE;
+		stAxisM3_A.In.xEnable	:= TRUE;
+		bTempAllAxisEnable		:= TRUE;
+		bTempAllAxisEnableHMI	:= TRUE;
+		nStateEnable			:= 10;
+	ELSIF bTempAllAxisEnable AND NOT GVL_Process.bAllAxesEnable THEN 
+		stAxisX.In.xEnable		:= FALSE;
+		stAxisY.In.xEnable		:= FALSE;
+		stAxisZ.In.xEnable		:= FALSE;
+		stAxisM1_B.In.xEnable	:= FALSE;
+		stAxisM2_C.In.xEnable	:= FALSE;
+		stAxisM3_A.In.xEnable	:= FALSE;
+		bTempAllAxisEnableHMI	:= FALSE;
+		bTempAllAxisEnable		:= FALSE;
+(*	ELSIF bTempAllAxisEnableHMI OR GVL_Process.stOpcUaVariablesR.bEnableAllProcess THEN
+		stAxisX.In.xEnable		:= FALSE;
+		stAxisY.In.xEnable		:= FALSE;
+		stAxisZ.In.xEnable		:= FALSE;
+		stAxisM1_B.In.xEnable	:= FALSE;
+		stAxisM2_C.In.xEnable	:= FALSE;
+		stAxisM3_A.In.xEnable	:= FALSE;
+		bTempAllAxisEnableHMI	:= FALSE;
+		bTempAllAxisEnable		:= FALSE;*)
+	END_IF
+	
+10:
+	IF NOT PRG_Kinematic.fbKinConfigGroup.bError THEN 
+		PRG_Kinematic.bExecuteKinResetGroup		:= FALSE;
+		PRG_Kinematic.bExecuteKinConfigGroup 	:= TRUE;
+		nStateEnable	:= 20;
+	ELSE
+		PRG_Kinematic.bExecuteKinResetGroup	:= TRUE;
+	END_IF 
+	
+20:
+	IF VisuElems.CURRENTVISU = 'Visualization_AxesInfo_Manual' THEN 
+		nStateEnable	:= 50;
+	ELSIF VisuElems.CURRENTVISU = 'Visualization_AxesInfo' THEN
+		nStateEnable	:= 150;
+	END_IF
+
+50:
+	IF NOT GVL_Process.bAllAxesEnable THEN 
+		nStateEnable	:= 170;
+	END_IF
+	
+150:
+	IF NOT PRG_NcControl.bNciError THEN 
+		PRG_NcControl.bNciEnable	:= TRUE;
+		nStateEnable				:= 160;
+	END_IF
+
+160:
+	IF NOT GVL_Process.bAllAxesEnable THEN 
+		nStateEnable	:= 170;
+	END_IF
+	
+170:
+	GVL_Process.bAllAxesReset	:= TRUE;
+	IF nStateReset = 60 THEN 
+		GVL_Process.bAllAxesReset	:= FALSE;
+		nStateEnable	:= 180;
+	END_IF
+	
+180:
+	GVL_Process.bAllAxesReset	:= TRUE;
+	IF nStateReset = 60 THEN 
+		GVL_Process.bAllAxesReset	:= FALSE;
+		nStateEnable	:= 0;
+	END_IF
+	
+END_CASE
+
+
+
+//Kinematic ile otomatik 'Cartesian mode' Active-Inactive
+IF nStateReset = 0 THEN 
+	IF GVL_Kin.stKinToPLC.ChnOperationState = 4 THEN 
+		PRG_Kinematic.bCartesianMode	:= FALSE;
+	ELSIF GVL_Kin.stKinToPLC.ChnOperationState = 0 THEN 
+		PRG_Kinematic.bCartesianMode	:= FALSE;
+	ELSIF GVL_Kin.stKinToPLC.ChnOperationState = 1 THEN 
+		PRG_Kinematic.bCartesianMode	:= TRUE;
+	END_IF
+END_IF 
+
+CASE nStateReset OF  
+0: 
+	IF GVL_Process.bAllAxesReset THEN
+		nStateReset	:= 10;
+	END_IF
+
+10:
+	//NCI Start Reset
+	IF PRG_NcControl.bNciStart THEN  //GVL_Process.bNciStartPLC	THEN  
+		PRG_NcControl.bNciStart	:= FALSE;  //GVL_Process.bNciStartPLC	:= FALSE; 
+		nStateReset	:= 20;
+	ELSE
+		nStateReset	:= 20;
+	END_IF
+	
+20:
+	//NCI Enable Reset
+	IF PRG_NcControl.bNciEnable THEN 
+		PRG_NcControl.bNciEnable	:= FALSE;
+		nStateReset	:= 30;
+	ELSE
+		nStateReset	:= 30;
+	END_IF
+
+30:
+	//Kinematic Cartesian Mode Reset
+	IF PRG_Kinematic.bCartesianMode THEN 
+		PRG_Kinematic.bCartesianMode	:= FALSE;
+	ELSE
+		PRG_Kinematic.bExecuteKinConfigGroup := TRUE;
+		nStateReset	:= 40;
+	END_IF
+	
+40:
+	// Kinematic Reset
+	IF NOT PRG_Kinematic.fbKinConfigGroup.bError THEN 
+		PRG_Kinematic.bExecuteKinConfigGroup := FALSE;
+		nStateReset	:= 50;
+	END_IF 
+	
+50:
+	//Axes Reset
+	GVL_Axis.stAxisM1_B.In.xReset	:= TRUE;
+	GVL_Axis.stAxisM2_C.In.xReset	:= TRUE;
+	GVL_Axis.stAxisM3_A.In.xReset	:= TRUE;
+	GVL_Axis.stAxisX.In.xReset		:= TRUE;
+	GVL_Axis.stAxisY.In.xReset		:= TRUE;
+	GVL_Axis.stAxisZ.In.xReset		:= TRUE;
+	PRG_Kinematic.bExecuteKinResetGroup	:= TRUE;
+	IF NOT GVL_Axis.stAxisM1_B.Out.xAxisError AND NOT GVL_Axis.stAxisM2_C.Out.xAxisError
+		AND NOT GVL_Axis.stAxisM3_A.Out.xAxisError AND NOT GVL_Axis.stAxisX.Out.xAxisError
+		AND NOT GVL_Axis.stAxisY.Out.xAxisError AND NOT GVL_Axis.stAxisZ.Out.xAxisError THEN 
+			GVL_Axis.stAxisM1_B.In.xReset	:= FALSE;
+			GVL_Axis.stAxisM2_C.In.xReset	:= FALSE;
+			GVL_Axis.stAxisM3_A.In.xReset	:= FALSE;
+			GVL_Axis.stAxisX.In.xReset		:= FALSE;
+			GVL_Axis.stAxisY.In.xReset		:= FALSE;
+			GVL_Axis.stAxisZ.In.xReset		:= FALSE;
+			PRG_Kinematic.bExecuteKinResetGroup	:= FALSE;
+			nStateReset						:= 60;
+	END_IF
+	
+60:
+	PRG_Kinematic.bCartesianMode	:= TRUE;
+	IF NOT GVL_Process.bAllAxesReset THEN 
+		nStateReset	:= 0;
+	END_IF
+END_CASE
+
+//Eğer AllAxisEnable Yoksa NCI Starta Basılamasın
+IF NOT GVL_Process.bAllAxesEnable THEN 
+	PRG_NcControl.bNciStart	:= FALSE; //GVL_Process.bNciStartPLC	:= FALSE; 
+END_IF
+
+// Butun eksenler enable oldugunda tek 1 bit aktif olsun 
+	IF stAxisM1_B.Out.xEnabled AND 
+		stAxisM2_C.Out.xEnabled AND 
+		stAxisM3_A.Out.xEnabled AND 
+		stAxisX.Out.xEnabled AND 
+		stAxisY.Out.xEnabled AND 
+		stAxisZ.Out.xEnabled THEN 
+			GVL_Process.bAllAxesEnabled	:= TRUE;
+	ELSE
+			GVL_Process.bAllAxesEnabled	:= FALSE;
+	END_IF]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ACT_FromTC3toTwinCATHMI" Id="{a61d8d50-3133-485d-92cc-d4b71d20a0e3}">
+      <Implementation>
+        <ST><![CDATA[// From TC3 to TwinCAT HMI
+	GVL_Process.stOpcUaVariablesW.fActPosX			:= GVL_Axis.AxisX.NcToPlc.ActPos;
+	GVL_Process.stOpcUaVariablesW.fActPosY			:= GVL_Axis.AxisY.NcToPlc.ActPos;
+	GVL_Process.stOpcUaVariablesW.fActPosZ			:= GVL_Axis.AxisZ.NcToPlc.ActPos;
+	GVL_Process.stOpcUaVariablesW.fActPosM1			:= GVL_Axis.AxisM1_B.NcToPlc.ActPos;
+	GVL_Process.stOpcUaVariablesW.fActPosM2			:= GVL_Axis.AxisM2_C.NcToPlc.ActPos;
+	GVL_Process.stOpcUaVariablesW.fActPosM3			:= GVL_Axis.AxisM3_A.NcToPlc.ActPos;
+
+	GVL_Process.stOpcUaVariablesW.fActVeloX			:= GVL_Axis.AxisX.NcToPlc.SetVelo;
+	GVL_Process.stOpcUaVariablesW.fActVeloY			:= GVL_Axis.AxisY.NcToPlc.SetVelo;
+	GVL_Process.stOpcUaVariablesW.fActVeloZ			:= GVL_Axis.AxisZ.NcToPlc.SetVelo;
+	GVL_Process.stOpcUaVariablesW.fActVeloM1		:= GVL_Axis.AxisM1_B.NcToPlc.SetVelo;
+	GVL_Process.stOpcUaVariablesW.fActVeloM2		:= GVL_Axis.AxisM2_C.NcToPlc.SetVelo;
+	GVL_Process.stOpcUaVariablesW.fActVeloM3		:= GVL_Axis.AxisM3_A.NcToPlc.SetVelo;
+	
+	GVL_Process.stOpcUaVariablesW.fLagDistanceX		:= GVL_Axis.AxisX.NcToPlc.PosDiff;	
+	GVL_Process.stOpcUaVariablesW.fLagDistanceY		:= GVL_Axis.AxisY.NcToPlc.PosDiff;
+	GVL_Process.stOpcUaVariablesW.fLagDistanceZ		:= GVL_Axis.AxisZ.NcToPlc.PosDiff;
+	GVL_Process.stOpcUaVariablesW.fLagDistanceM1	:= GVL_Axis.AxisM1_B.NcToPlc.PosDiff;
+	GVL_Process.stOpcUaVariablesW.fLagDistanceM2	:= GVL_Axis.AxisM2_C.NcToPlc.PosDiff;
+	GVL_Process.stOpcUaVariablesW.fLagDistanceM3	:= GVL_Axis.AxisM3_A.NcToPlc.PosDiff;
+
+	
+	GVL_Process.stOpcUaVariablesW.sNciActLine		:= PRG_NcControl.sNciActualLine;
+	GVL_Process.stOpcUaVariablesW.sNciLines			:= PRG_NcControl.sNciLines;
+	GVL_Process.stOpcUaVariablesW.sFileNameVisu		:= sFileNameVisu;
+	
+	GVL_Process.stOpcUaVariablesW.bNciRunning		:= PRG_NcControl.bProgramRunning;
+	GVL_Process.stOpcUaVariablesW.bNciStopped		:= PRG_NcControl.bProgramStopped;
+	GVL_Process.stOpcUaVariablesW.bNciFinished		:= PRG_NcControl.bProgramFinished;	
+	
+	GVL_Process.stOpcUaVariablesW.bEnabledX			:= GVL_Axis.stAxisX.Out.xEnabled;
+	GVL_Process.stOpcUaVariablesW.bEnabledY			:= GVL_Axis.stAxisY.Out.xEnabled;
+	GVL_Process.stOpcUaVariablesW.bEnabledZ			:= GVL_Axis.stAxisZ.Out.xEnabled;
+	GVL_Process.stOpcUaVariablesW.bEnabledM1		:= GVL_Axis.stAxisM1_B.Out.xEnabled;
+	GVL_Process.stOpcUaVariablesW.bEnabledM2		:= GVL_Axis.stAxisM2_C.Out.xEnabled;
+	GVL_Process.stOpcUaVariablesW.bEnabledM3		:= GVL_Axis.stAxisM3_A.Out.xEnabled;
+	
+	GVL_Process.stOpcUaVariablesW.bErrorX			:= GVL_Axis.stAxisX.Out.xAxisError;
+	GVL_Process.stOpcUaVariablesW.bErrorY			:= GVL_Axis.stAxisY.Out.xAxisError;
+	GVL_Process.stOpcUaVariablesW.bErrorZ			:= GVL_Axis.stAxisZ.Out.xAxisError;
+	GVL_Process.stOpcUaVariablesW.bErrorM1			:= GVL_Process.nAutoManMode; //Degistirildi GVL_Axis.stAxisM1_B.Out.xAxisError;
+	GVL_Process.stOpcUaVariablesW.bErrorM2			:= GVL_Process.bNciStartPLC; //Degistirildi GVL_Axis.stAxisM2_C.Out.xAxisError;
+	GVL_Process.stOpcUaVariablesW.bErrorM3			:= GVL_Process.bAllAxesEnablePLC;	//Değiştirildi GVL_Axis.stAxisM3_C.Out.xAxisError;
+	
+
+	
+//From TwinCAT HMI to TC3 Enable
+CASE nStateEnableHP OF  
+0:
+	IF NOT GVL_Process.bAllAxesEnable THEN 
+		nStateEnableHP	:= 10;
+	END_IF
+10:
+	IF GVL_Process.bAllAxesEnablePLC THEN 
+		GVL_Process.bAllAxesEnable	:= TRUE;
+		nStateEnableHP	:= 50;
+	ELSIF GVL_Process.stOpcUaVariablesR.bEnableAllProcess THEN 
+		GVL_Process.bAllAxesEnablePLC	:= TRUE;
+		GVL_Process.bAllAxesEnable		:= TRUE;
+		nStateEnableHP	:= 100;
+	END_IF
+	
+50:
+	IF GVL_Process.stOpcUaVariablesR.bEnableAllProcess THEN 
+		nStateEnableHP	:= 150;
+	END_IF
+
+100:
+	IF GVL_Process.bAllAxesEnablePLC THEN 
+		nStateEnableHP	:= 150;
+	END_IF  
+	
+150:
+	IF NOT PRG_NcControl.bNciStart THEN 
+		IF NOT GVL_Process.bAllAxesEnablePLC  THEN 
+			GVL_Process.bAllAxesEnable		:= FALSE;
+			nStateEnableHP	:= 200;
+		ELSIF NOT GVL_Process.stOpcUaVariablesR.bEnableAllProcess THEN
+			GVL_Process.bAllAxesEnablePLC	:= FALSE;
+			GVL_Process.bAllAxesEnable		:= FALSE;
+			nStateEnableHP	:= 210; 
+		END_IF
+	ELSIF PRG_NcControl.bNciStart AND NOT GVL_Process.bAllAxesEnablePLC THEN 
+		GVL_Process.bAllAxesEnablePLC	:= TRUE;
+	END_IF 
+
+200:
+	IF NOT GVL_Process.stOpcUaVariablesR.bEnableAllProcess THEN 
+		nStateEnableHP	:= 0; 
+	END_IF
+
+210:
+	IF NOT GVL_Process.bAllAxesEnablePLC THEN 
+		nStateEnableHP	:= 0; 
+	END_IF
+END_CASE
+
+
+	
+//From TwinCAT HMI to TC3 NciStates
+IF GVL_Process.nAutoManMode	THEN 
+	
+	CASE nStateNciHP OF  
+	0:
+		IF NOT PRG_NcControl.bNciStart THEN 
+			nStateNciHP	:= 10;
+		END_IF
+	10:
+		IF GVL_Process.bNciStartPLC THEN 
+			PRG_NcControl.bNciStart	:= TRUE;
+			nStateNciHP	:= 50;
+		ELSIF GVL_Process.stOpcUaVariablesR.bNciStart THEN 
+			GVL_Process.bNciStartPLC	:= TRUE;
+			PRG_NcControl.bNciStart		:= TRUE;
+			nStateNciHP	:= 100;
+		END_IF
+		
+	50:
+		IF GVL_Process.stOpcUaVariablesR.bNciStart THEN 
+			nStateNciHP	:= 150;
+		END_IF
+	
+	100:
+		IF GVL_Process.bNciStartPLC THEN 
+			nStateNciHP	:= 150;
+		END_IF  
+		
+	150:
+		IF NOT GVL_Process.bNciStartPLC THEN 
+			PRG_NcControl.bNciStart		:= FALSE;
+			nStateNciHP	:= 200;
+		ELSIF NOT GVL_Process.stOpcUaVariablesR.bNciStart THEN
+			GVL_Process.bNciStartPLC	:= FALSE;
+			PRG_NcControl.bNciStart		:= FALSE;
+			nStateNciHP	:= 210; 
+		END_IF
+	
+	200:
+		IF NOT GVL_Process.stOpcUaVariablesR.bNciStart
+	
+	 THEN 
+			nStateNciHP	:= 0; 
+		END_IF
+	
+	210:
+		IF NOT GVL_Process.bNciStartPLC THEN 
+			nStateNciHP	:= 0; 
+		END_IF
+	END_CASE
+	
+ELSE
+	GVL_Process.bNciStartPLC	:= FALSE;
+	nStateNciHP	:= 0;
+END_IF 
+
+
+	//GVL_Process.bAllAxesEnable	:= GVL_Process.stOpcUaVariablesR.bEnableAllProcess;
+	//PRG_NcControl.bNciStart		:= GVL_Process.stOpcUaVariablesR.bNciStart;
+	
+]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ACT_NciPathChange" Id="{f8a54c30-ff14-40df-a3d5-c33e44fac042}">
+      <Implementation>
+        <ST><![CDATA[//NCI Path değiştirilirken Kinematic'i Hataya Düşmesin Diye Disable Etme
+IF bChangeFile AND (bCancelSelectFile OR bSelectFile) THEN  
+	bChangeFile	:= FALSE;
+END_IF
+
+CASE nStatePathChange OF 
+0:
+	IF bChangeFile AND 
+		(GVL_Kin.stKinToPLC.ChnOperationState = 4) THEN 
+		PRG_Kinematic.bCartesianMode			:= FALSE;
+		PRG_Kinematic.bExecuteKinConfigGroup	:= TRUE;
+		nStatePathChange						:= 10;
+	END_IF
+	
+10:
+	
+	IF  (GVL_Kin.stKinToPLC.ChnOperationState = 4) THEN 
+		PRG_Kinematic.bExecuteKinConfigGroup	:= FALSE;
+		nStatePathChange		:= 15;
+	END_IF
+	
+15:
+	IF bChangeFile THEN 
+		nStatePathChange	:= 20;
+	END_IF 	
+	
+20:
+	IF (NOT bChangeFile) THEN 
+		PRG_Kinematic.bExecuteKinConfigGroup	:= TRUE;
+		nStatePathChange						:= 30;
+	END_IF
+	
+30:
+	IF  (GVL_Kin.stKinToPLC.ChnOperationState = 1) THEN 
+		PRG_Kinematic.bExecuteKinConfigGroup	:= FALSE;
+		nStatePathChange						:= 40;
+	END_IF
+	
+40:
+	PRG_Kinematic.bExecuteKinConfigGroup	:= TRUE;
+	IF  (GVL_Kin.stKinToPLC.ChnOperationState = 4) THEN 
+		PRG_Kinematic.bExecuteKinConfigGroup	:= FALSE;
+		nStatePathChange						:= 0;
+	END_IF
+END_CASE
+
+//NCI Path ini Listeden Seçme Adımları
+//NC kodunun oldugu klasördeki .nc leri listeleme
+fbFindFileList(
+	sNetId			:= '', 
+	sPathName		:= sPathName, 
+	eCmd			:= eEnumCmd_First, 
+	pFindList		:= ADR(arrFileList), 
+	cbFindList		:= SIZEOF(arrFileList), 
+	bExecute		:= bExecuteFindList, 
+	tTimeout		:= T#3S);
+
+//3 sn de bir Liste Güncelleme 
+tUpdatePathList(IN:= (NOT tUpdatePathList.Q) AND (NOT bChangeFile) , PT:= T#3S);
+IF tUpdatePathList.Q THEN 
+	bExecuteFindList	:= TRUE;
+ELSE
+	bExecuteFindList	:= FALSE;
+END_IF
+	
+//Liste Seçiminde Select ve Cancel a Göre Seçili Öğeyi Ayarlama
+//Eğer Ayarlanmasaydı Listeye Tekrar Girildiğinde Cancel Edilince Seçili Değil En Son Tıklanan Aktif Kalıyordu
+CASE nStateFileNameList OF 
+0:
+	IF bChangeFile THEN 
+		nLastFileNameList	:= nFileNameList;
+		nStateFileNameList	:= 10;
+	END_IF
+
+10:
+	IF bSelectFile THEN 
+		nLastFileNameList	:= nFileNameList;
+		nStateFileNameList	:= 20;
+	ELSIF bCancelSelectFile THEN 
+		nFileNameList		:= nLastFileNameList;
+		nStateFileNameList	:= 20;
+	END_IF
+
+20:
+	IF NOT bSelectFile THEN 
+		nStateFileNameList	:= 0;
+	END_IF
+END_CASE
+
+//ST_FindFileEntry tipinin içerisinden sadece ismi çekme 
+FOR i:=0 TO 19 BY 1 DO 
+	arrFileNameList[i]	:= arrFileList[i].sFileName;
+END_FOR
+
+//Path Seçim Ekranındaki Pathi Aktif Etme 
+IF bSelectFile THEN 
+	sFileName	:= CONCAT('C:\TwinCAT\CNC\',arrFileNameList[nFileNameList+1]);
+	//Path in HMI Ekranında görüntülenecek hali
+	sFileNameVisu	:= arrFileNameList[nFileNameList+1];
+END_IF 
+
+
+
+]]></ST>
+      </Implementation>
+    </Action>
+    <LineIds Name="PRG_Process">
+      <LineId Id="3" Count="5" />
+      <LineId Id="93" Count="1" />
+      <LineId Id="9" Count="28" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_Process.ACT_AutoManualMode">
+      <LineId Id="2" Count="222" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_Process.ACT_AxisSelectOnManualMode">
+      <LineId Id="2" Count="48" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_Process.ACT_EnableReset">
+      <LineId Id="2" Count="170" />
+      <LineId Id="1" Count="0" />
+      <LineId Id="174" Count="0" />
+      <LineId Id="173" Count="0" />
+      <LineId Id="176" Count="4" />
+      <LineId Id="175" Count="0" />
+      <LineId Id="181" Count="3" />
+    </LineIds>
+    <LineIds Name="PRG_Process.ACT_FromTC3toTwinCATHMI">
+      <LineId Id="2" Count="47" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="135" Count="0" />
+      <LineId Id="137" Count="2" />
+      <LineId Id="141" Count="1" />
+      <LineId Id="148" Count="0" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="145" Count="0" />
+      <LineId Id="158" Count="0" />
+      <LineId Id="149" Count="0" />
+      <LineId Id="146" Count="0" />
+      <LineId Id="144" Count="0" />
+      <LineId Id="150" Count="1" />
+      <LineId Id="153" Count="3" />
+      <LineId Id="152" Count="0" />
+      <LineId Id="159" Count="0" />
+      <LineId Id="161" Count="0" />
+      <LineId Id="160" Count="0" />
+      <LineId Id="157" Count="0" />
+      <LineId Id="162" Count="0" />
+      <LineId Id="244" Count="0" />
+      <LineId Id="164" Count="0" />
+      <LineId Id="173" Count="0" />
+      <LineId Id="165" Count="0" />
+      <LineId Id="171" Count="0" />
+      <LineId Id="174" Count="1" />
+      <LineId Id="172" Count="0" />
+      <LineId Id="166" Count="0" />
+      <LineId Id="246" Count="1" />
+      <LineId Id="245" Count="0" />
+      <LineId Id="177" Count="0" />
+      <LineId Id="167" Count="0" />
+      <LineId Id="178" Count="3" />
+      <LineId Id="169" Count="0" />
+      <LineId Id="183" Count="1" />
+      <LineId Id="182" Count="0" />
+      <LineId Id="136" Count="0" />
+      <LineId Id="185" Count="1" />
+      <LineId Id="189" Count="1" />
+      <LineId Id="238" Count="0" />
+      <LineId Id="237" Count="0" />
+      <LineId Id="191" Count="36" />
+      <LineId Id="236" Count="0" />
+      <LineId Id="235" Count="0" />
+      <LineId Id="228" Count="6" />
+      <LineId Id="187" Count="0" />
+      <LineId Id="240" Count="3" />
+      <LineId Id="239" Count="0" />
+      <LineId Id="188" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="50" Count="2" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_Process.ACT_NciPathChange">
+      <LineId Id="2" Count="102" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <POU Name="PRG_OpcUA" Id="{bdc02b5e-c0a1-43ac-a98e-bb1375529d1f}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_OpcUA
+VAR
+	//OPC UA Variables
+	fbOpcUAWrite	: FB_OpcUAWrite;
+	tStartComm		: TON;
+	nTest			: INT;
+	bExecute		: BOOL;
+	bBusy			: BOOL;
+	bError			: BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//OPC UA 
+(*Servera gönderilecek bilgiler*)
+
+tStartComm(IN:= NOT bExecute, PT:= T#5S);
+IF  tStartComm.Q THEN 
+	bExecute	:= TRUE;
+END_IF
+
+fbOpcUAWrite(
+	bExecute			:= bExecute,
+	sServerURL			:= 'opc.tcp://tr.kilit.com:4843',	
+	sNameSpace			:= 'urn:KILIT-C01:BeckhoffAutomation:Ua:PLC1',
+	sNodeNameW			:='PRG_Delta.arrDataW1', 
+	sNodeNameR			:='PRG_Delta.arrDataR1',
+	nVariableSizeW		:= SIZEOF(GVL_Process.stOpcUaVariablesW),
+	pVariableAddrW		:= ADR(GVL_Process.stOpcUaVariablesW),
+	nVariableSizeR		:= SIZEOF(GVL_Process.stOpcUaVariablesR),
+	pVariableAddrR		:= ADR(GVL_Process.stOpcUaVariablesR),
+	tWaitDataExchange	:=T#1S , 
+	tWaitReConnect		:=T#4S ,
+	bBusy				=>bBusy , 
+	bError				=>bError );
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="PRG_OpcUA">
+      <LineId Id="3" Count="10" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="18" Count="10" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

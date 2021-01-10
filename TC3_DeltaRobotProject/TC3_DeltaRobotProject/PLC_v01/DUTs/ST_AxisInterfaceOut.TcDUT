@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <DUT Name="ST_AxisInterfaceOut" Id="{b562c7a4-1881-4e99-89d0-88cec85a7e70}">
+    <Declaration><![CDATA[TYPE ST_AxisInterfaceOut :
+STRUCT
+	xEnabled		: BOOL;
+	xHomed			: BOOL;
+	xMoveDone		: BOOL;
+	xAxisError		: BOOL;
+	nAxisErrId		: UDINT;
+	xDriveError		: BOOL;
+	nDriveErrId		: UDINT;
+	xFunctionError	: BOOL;
+	nFunctionErrId	: UDINT;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

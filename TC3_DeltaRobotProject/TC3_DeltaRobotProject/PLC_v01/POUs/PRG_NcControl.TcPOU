@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.0">
+  <POU Name="PRG_NcControl" Id="{e2612cb2-7bc2-44fa-81a4-a43004d136bd}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_NcControl
+VAR_INPUT
+	//PRG_Process içerisinde resetlemede kullanabilmek için 
+	bNciEnable			: BOOL;
+	bNciStart			: BOOL;
+END_VAR
+
+VAR
+	fbAxisControlM1_B	: FB_AxisControl;
+	fbAxisControlM2_C	: FB_AxisControl;
+	fbAxisControlM3_A	: FB_AxisControl;	
+	
+	fbAxisControlX		: FB_AxisControl;
+	fbAxisControlY		: FB_AxisControl;
+	fbAxisControlZ		: FB_AxisControl;
+	
+	fbNciChannel		: FB_NciChannel;
+	fbNciMFunc			: FB_NciMFunctions;
+	fbNciFastMFunc		: FB_NciFastMFunctions;
+	fbNciReadLine		: FB_NciReadLine;
+	bAxisEnable			: BOOL;
+	fAxisOverride		: LREAL;
+	bNciSingleMode		: BOOL;
+	bNciNextStep		: BOOL;
+	fNciOverride		: LREAL	:= 100.0;
+	eNciItpState		: E_NciChannelState;
+	bBuildGroupDone		: BOOL;
+	bSingleModeActive	: BOOL;
+	bProgramRunning		: BOOL;
+	bProgramStopped		: BOOL;
+	bProgramFinished	: BOOL;
+	bNciError			: BOOL;
+	nNciErrorId			: UDINT;
+	bMFuncBusy			: BOOL;
+	bMFuncError			: BOOL;
+	nMFuncErrorId		: UDINT;
+	bEnableReadLine		: BOOL	:= TRUE;
+	sNciLines			: STRING(255);
+	sNciActualLine		: STRING(80);	
+	bEnable: BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//ACT_EmergencyOnPanel();
+
+fbAxisControlM1_B(stAxisInterface:= stAxisM1_B, stAxisRef:= AxisM1_B);
+fbAxisControlM2_C(stAxisInterface:= stAxisM2_C, stAxisRef:= AxisM2_C);
+fbAxisControlM3_A(stAxisInterface:= stAxisM3_A, stAxisRef:= AxisM3_A);
+
+fbAxisControlX(stAxisInterface:= stAxisX, stAxisRef:= AxisX);
+fbAxisControlY(stAxisInterface:= stAxisY, stAxisRef:= AxisY);
+fbAxisControlZ(stAxisInterface:= stAxisZ, stAxisRef:= AxisZ);
+
+(*
+		stAxisX.In.xEnable		:= bEnable;
+		stAxisY.In.xEnable		:= bEnable;
+		stAxisZ.In.xEnable		:= bEnable;
+		stAxisM1_B.In.xEnable	:= bEnable;
+		stAxisM2_C.In.xEnable	:= bEnable;
+		stAxisM3_A.In.xEnable	:= bEnable;
+*)
+(*		
+fbNciChannel(
+	bEnable				:= bNciEnable, 
+	bStart				:= bNciStart, 
+	bSingleMode			:= bNciSingleMode,
+	bSingleModeStart	:= bNciNextStep,
+	fOverride			:= fNciOverride,
+	nXAxisId			:= AxisX.NcToPlc.AxisId, 
+	nYAxisId			:= AxisY.NcToPlc.AxisId, 
+	nZAxisId			:= AxisZ.NcToPlc.AxisId, 
+	sProgramPath		:= PRG_Process.sFileName, 
+	sSubroutinePath		:= 'C:\TwinCAT\Mc\Nci\Sub\', 
+	sNciToPLC			:= stNciToPLC, 
+	sPlcToNci			:= stPlcToNci, 
+	eNciChannelState	=> eNciItpState, 
+	bBuildGroupDone		=> bBuildGroupDone, 
+	bSingleModeActive	=> bSingleModeActive,
+	bProgramRunning		=> bProgramRunning, 
+	bProgramStopped		=> bProgramStopped, 
+	bProgramFinished	=> bProgramFinished, 
+	bError				=> bNciError, 
+	nErrorId			=> nNciErrorId);
+	
+fbNciMFunc(
+	sNciToPlc			:= stNciToPLC, 
+	sPlcToNci			:= stPlcToNci, 
+	bBusy				=> bMFuncBusy, 
+	bError				=> bMFuncError, 
+	nErrorId			=> nMFuncErrorId);
+	
+fbNciFastMFunc(
+	sNciToPlc			:= stNciToPLC);
+	
+fbNciReadLine(
+	bEnable				:= bEnableReadLine, 
+	tIdleTime			:= T#100MS, 
+	sNciToPlc			:= stNciToPLC, 
+	sNciLines			=> sNciLines,
+	sActualLine			=> sNciActualLine );
+	
+
+*)]]></ST>
+    </Implementation>
+    <Action Name="ACT_EmergencyOnPanel" Id="{934689ac-bf94-457d-b30b-0d4c19fb7075}">
+      <Implementation>
+        <ST><![CDATA[(*Button On Control Panel- Emergency and Green Button*)
+GVL_Process.fTrigbEmergency(CLK:= GVL_Process.bEmergencyOnPanel);
+GVL_Process.rTrigbEmergency(CLK:= GVL_Process.bEmergencyOnPanel);
+
+
+CASE GVL_Process.nStateEmergency OF 
+0:
+	IF GVL_Process.fTrigbEmergency.Q THEN 
+		fNciOverride	:= 0;
+		GVL_Process.nStateEmergency	:= 10;
+	END_IF
+	
+10:
+	IF GVL_Process.rTrigbEmergency.Q THEN 
+		GVL_Process.nStateEmergency	:= 20;
+	END_IF
+	
+20:
+	IF GVL_Process.bGreenBtnOnPanel THEN 
+		fNciOverride	:= 100;
+		GVL_Process.nStateEmergency	:= 0;
+	END_IF
+END_CASE]]></ST>
+      </Implementation>
+    </Action>
+    <LineIds Name="PRG_NcControl">
+      <LineId Id="185" Count="0" />
+      <LineId Id="184" Count="0" />
+      <LineId Id="3" Count="6" />
+      <LineId Id="139" Count="0" />
+      <LineId Id="91" Count="0" />
+      <LineId Id="93" Count="4" />
+      <LineId Id="92" Count="0" />
+      <LineId Id="140" Count="0" />
+      <LineId Id="10" Count="40" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_NcControl.ACT_EmergencyOnPanel">
+      <LineId Id="25" Count="0" />
+      <LineId Id="2" Count="6" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="9" Count="9" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="19" Count="1" />
+      <LineId Id="1" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <POU Name="FB_ScreenOnOff_Win7" Id="{6a0e85e3-dae6-4bdd-acfb-9cf6bb61d3d5}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ScreenOnOff_Win7
+VAR_INPUT
+	bScreenOff			: BOOL;
+END_VAR
+VAR_OUTPUT
+	bDone				: BOOL;
+END_VAR
+VAR
+	fbSleepMonitor		: NT_StartProcess;
+	nState				: INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE nState OF 	
+0:
+	IF bScreenOff THEN
+		nState	:= 10;
+	END_IF
+	
+10:
+	fbSleepMonitor(
+		NETID		:= '', 
+		PATHSTR		:= 'C:\MonitorSleep.exe', 
+		DIRNAME		:= 'C:\', 
+		COMNDLINE	:= , 
+		START		:= TRUE, 
+		TMOUT		:= T#5S, 
+		BUSY		=> , 
+		ERR			=> , 
+		ERRID		=> );
+	
+	IF NOT fbSleepMonitor.BUSY AND NOT fbSleepMonitor.ERR THEN 
+		fbSleepMonitor(START := FALSE);
+		nState		:= 20;
+	END_IF 
+		
+20:
+	bDone	:= TRUE;
+	IF NOT bScreenOff THEN 
+		bDone 	:= FALSE;
+		nState	:= 0;
+	END_IF 		
+
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_ScreenOnOff_Win7">
+      <LineId Id="3" Count="29" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

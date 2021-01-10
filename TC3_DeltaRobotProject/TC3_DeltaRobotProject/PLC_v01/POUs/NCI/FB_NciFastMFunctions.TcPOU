@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <POU Name="FB_NciFastMFunctions" Id="{2b17679f-d37f-43cc-8ddc-f00c51a308b2}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_NciFastMFunctions
+VAR_IN_OUT
+	sNciToPlc		: NCTOPLC_NCICHANNEL_REF;
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	i				: INT;
+	l				: SINT;
+	bBit			: BOOL;
+	index			: UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+(* Fill the global defined M-functions array with 
+	fast M-Functions from NCI Channel *)
+
+FOR i:=0 TO 4 DO  (* check all 5 dwords *)
+	FOR l := 0 TO 31 DO
+		bBit := GETBIT32(sNciToPlc.FastMFuncMask[i+1], l);
+      	index := INT_TO_UINT((i*32) + l);
+		IF ( bBit ) THEN
+			bFastMFunc[index] := TRUE;
+		ELSE
+			bFastMFunc[index] := FALSE;
+		END_IF
+	END_FOR
+END_FOR
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_NciFastMFunctions">
+      <LineId Id="3" Count="14" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

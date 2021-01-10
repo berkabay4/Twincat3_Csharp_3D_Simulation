@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.0">
+  <GVL Name="GVL_Axis" Id="{a0c8496c-8f72-40f3-b773-cc1e3273c8a3}">
+    <Declaration><![CDATA[VAR_GLOBAL
+// Kullanilacak olan gercek eksenler
+	AxisM1_B			: AXIS_REF;			
+	AxisM2_C			: AXIS_REF;
+	AxisM3_A			: AXIS_REF;	
+	
+// Kinematik grupta olusacak eksenler
+	AxisX				: AXIS_REF;
+	AxisY				: AXIS_REF;
+	AxisZ				: AXIS_REF;
+	
+// Gercek eksenler icin interface yapilari
+	stAxisM1_B			: ST_AxisInterface;
+	stAxisM2_C			: ST_AxisInterface;
+	stAxisM3_A			: ST_AxisInterface;
+	
+// Kinematik eksenlerin interface yapilari
+	stAxisX				: ST_AxisInterface;
+	stAxisY				: ST_AxisInterface;
+	stAxisZ				: ST_AxisInterface;
+	
+	sAxisM1_BName		: STRING	:= 'Axis M1';
+	sAxisM2_CName		: STRING	:= 'Axis M2';
+	sAxisM3_AName		: STRING	:= 'Axis M3';
+	
+	
+	sAxisXName			: STRING	:= 'Axis X';
+	sAxisYName			: STRING	:= 'Axis Y';
+	sAxisZName			: STRING	:= 'Axis Z';
+	
+	AxisM1PosValue		: LREAL;
+	AxisM2PosValue		: LREAL;
+	AxisM3PosValue		: LREAL;
+	
+	AxisXVal	:	LREAL;
+	AxisYVal	:	LREAL;	
+	AxisZVal	:	LREAL;
+	
+END_VAR
+]]></Declaration>
+  </GVL>
+</TcPlcObject>

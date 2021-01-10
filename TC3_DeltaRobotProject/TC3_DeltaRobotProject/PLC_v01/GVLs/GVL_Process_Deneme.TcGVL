@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.0">
+  <GVL Name="GVL_Process_Deneme" Id="{091b855b-3ebc-4e64-bd76-89907305f6be}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	
+bSensor	:	BOOL;
+bCatch	:	BOOL;
+
+bMovementDone	:	BOOL;
+bDataComp	:	BOOL;
+bGrapDone	:	BOOL;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

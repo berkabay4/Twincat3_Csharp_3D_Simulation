@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <POU Name="FB_NciReadLine" Id="{a8ee1bf6-ecad-45d9-bb77-90ffb0802d04}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_NciReadLine
+VAR_INPUT
+	bEnable			: BOOL;
+	tIdleTime		: TIME	:= T#100MS;
+END_VAR
+VAR_IN_OUT
+	sNciToPlc		: NCTOPLC_NCICHANNEL_REF;
+END_VAR
+VAR_OUTPUT
+	sNciLines		: STRING(255);
+	sActualLine		: STRING(80);
+	bError			: BOOL;
+	nErrorId		: UDINT;
+END_VAR
+VAR
+	fbAdsRead		: ADSREADEX;
+	fbTimer			: TON;
+	sReadString		: STRING(255);
+	sTempLine		: STRING(255);
+	nState			: INT;
+	nNrOfLines		: INT;
+	i				: INT;
+	nCharPos		: INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE nState OF
+
+0:
+	sReadString	:= '';
+	sActualLine	:= '';
+	bError		:= FALSE;
+	nErrorId	:= 0;
+	
+	IF bEnable THEN
+		nState	:= 10;
+	END_IF	
+	
+10:
+	fbAdsRead(
+		NETID		:= '', 
+		PORT		:= 500, 
+		IDXGRP		:= 16#2300 + ItpGetChannelId(sNciToPlc), 
+		IDXOFFS		:= 16#2000_0001, 
+		LEN			:= SIZEOF(sReadString), 
+		DESTADDR	:= ADR(sReadString), 
+		READ		:= TRUE, 
+		TMOUT		:= T#500MS );
+		
+	IF NOT fbAdsRead.BUSY AND NOT fbAdsRead.ERR THEN
+		fbAdsRead( READ := FALSE);
+		nState	:= 20;
+	ELSIF fbAdsRead.ERR THEN
+		fbAdsRead( READ := FALSE);
+		bError		:= TRUE;
+		nErrorId	:= fbAdsRead.ERRID;
+		nState		:= 900;
+	END_IF
+	
+20:
+	nNrOfLines	:= 0;
+	sTempLine	:= '';
+	sTempLine	:= sReadString;
+	sNciLines	:= sReadString;
+	
+	FOR i:= 1 TO 3 DO
+		nCharPos	:= FIND(sTempLine, '$R$N');
+		IF nCharPos <> 0 THEN
+			sActualLine		:= LEFT(sTempLine, nCharPos-1);
+			sTempLine		:= DELETE(STR:=sTempLine , LEN:=nCharPos+1, POS:=1);
+			nNrOfLines		:= nNrOfLines + 1;
+		ELSE
+			EXIT;
+		END_IF
+	END_FOR
+	
+	IF NOT bEnable THEN
+		nState	:= 0;
+	ELSIF tIdleTime = T#0S THEN
+		nState	:= 10;
+	ELSE
+		nState	:= 30;
+	END_IF
+	
+30:
+	fbTimer(IN:= TRUE, PT:= tIdleTime );
+	IF fbTimer.Q THEN
+		fbTimer(IN:= FALSE);
+		nState	:= 10;
+	END_IF
+	
+	IF NOT bEnable THEN
+		fbTimer(IN:= FALSE);
+		nState	:= 0;
+	END_IF
+
+900:
+	fbTimer(IN:= TRUE, PT:= T#1S );
+	IF fbTimer.Q THEN
+		fbTimer(IN:= FALSE);
+		nState	:= 10;
+	END_IF
+	
+	IF NOT bEnable THEN
+		fbTimer(IN:= FALSE);
+		nState	:= 0;
+	END_IF
+	
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_NciReadLine">
+      <LineId Id="3" Count="81" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <GVL Name="GVL_FileOpen" Id="{73e5e53b-7bcd-4487-a50c-04ec7e982726}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	fbFileListProvider	: Visu_FbFileListProvider;
+	stFileDialogParams 	: ST_FileDialogParams;
+	bFileDialogOpen 	: BOOL := FALSE;
+ 
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

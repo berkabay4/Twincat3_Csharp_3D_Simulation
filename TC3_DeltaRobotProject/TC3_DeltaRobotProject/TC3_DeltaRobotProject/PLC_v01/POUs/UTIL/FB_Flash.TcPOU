@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <POU Name="FB_Flash" Id="{0d1d5e3f-6281-46ec-aa52-6b61ae3620f4}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Flash
+VAR_INPUT
+	bEnable		: BOOL;
+	tInterval	: TIME;
+END_VAR
+VAR_OUTPUT
+	Q			: BOOL;
+END_VAR
+VAR
+	tWait		: TON;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+tWait(IN:= bEnable AND NOT tWait.Q  , PT:= tInterval);
+
+IF bEnable THEN
+	IF tWait.ET > (tInterval / 2) THEN
+		Q	:= TRUE;
+	ELSE
+		Q	:= FALSE;
+	END_IF
+ELSE
+	Q	:= FALSE;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Flash">
+      <LineId Id="3" Count="10" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,212 @@
+C:\Documents and Settings\eng\桌面\robot1\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe.config
+C:\Documents and Settings\eng\桌面\robot1\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe
+C:\Documents and Settings\eng\桌面\robot1\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.pdb
+C:\Documents and Settings\eng\桌面\robot1\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.dll
+C:\Documents and Settings\eng\桌面\robot1\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.SceneGraph.dll
+C:\Documents and Settings\eng\桌面\robot1\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.WinForms.dll
+C:\Documents and Settings\eng\桌面\robot1\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\eng\桌面\robot1\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.Properties.Resources.resources
+C:\Documents and Settings\eng\桌面\robot1\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.SharpGLForm.resources
+C:\Documents and Settings\eng\桌面\robot1\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Documents and Settings\eng\桌面\robot1\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Documents and Settings\eng\桌面\robot1\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.exe
+C:\Documents and Settings\eng\桌面\robot1\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.pdb
+C:\Documents and Settings\eng\桌面\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe.config
+C:\Documents and Settings\eng\桌面\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.exe
+C:\Documents and Settings\eng\桌面\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.pdb
+C:\Documents and Settings\eng\桌面\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe
+C:\Documents and Settings\eng\桌面\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.pdb
+C:\Documents and Settings\eng\桌面\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.dll
+C:\Documents and Settings\eng\桌面\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.SceneGraph.dll
+C:\Documents and Settings\eng\桌面\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.WinForms.dll
+C:\Documents and Settings\eng\桌面\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\eng\桌面\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.Properties.Resources.resources
+C:\Documents and Settings\eng\桌面\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.SharpGLForm.resources
+C:\Documents and Settings\eng\桌面\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Documents and Settings\eng\桌面\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\GenerateResource.write.1.tlog
+D:\Work\3D Scanner\Function\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe.config
+D:\Work\3D Scanner\Function\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.exe
+D:\Work\3D Scanner\Function\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.pdb
+D:\Work\3D Scanner\Function\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.Properties.Resources.resources
+D:\Work\3D Scanner\Function\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.SharpGLForm.resources
+D:\Work\3D Scanner\Function\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.GenerateResource.Cache
+D:\Work\3D Scanner\Function\SharpGL\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe.config
+D:\Work\3D Scanner\Function\SharpGL\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.exe
+D:\Work\3D Scanner\Function\SharpGL\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.pdb
+D:\Work\3D Scanner\Function\SharpGL\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe
+D:\Work\3D Scanner\Function\SharpGL\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.pdb
+D:\Work\3D Scanner\Function\SharpGL\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.dll
+D:\Work\3D Scanner\Function\SharpGL\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.SceneGraph.dll
+D:\Work\3D Scanner\Function\SharpGL\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.Serialization.dll
+D:\Work\3D Scanner\Function\SharpGL\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.WinForms.dll
+D:\Work\3D Scanner\Function\SharpGL\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.Properties.Resources.resources
+D:\Work\3D Scanner\Function\SharpGL\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.SharpGLForm.resources
+D:\Work\3D Scanner\Function\SharpGL\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.GenerateResource.Cache
+D:\Work\3D Scanner\Function\SharpGL\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csprojAssemblyReference.cache
+D:\Work\3D Scanner\Function\SharpGL\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CoreCompileInputs.cache
+D:\Work\3D Scanner\Function\SharpGL\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CopyComplete
+D:\Work\3D Scanner\Robotic Arm Simulation\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe.config
+D:\Work\3D Scanner\Robotic Arm Simulation\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.exe
+D:\Work\3D Scanner\Robotic Arm Simulation\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.pdb
+D:\Work\3D Scanner\Robotic Arm Simulation\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe
+D:\Work\3D Scanner\Robotic Arm Simulation\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.pdb
+D:\Work\3D Scanner\Robotic Arm Simulation\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.dll
+D:\Work\3D Scanner\Robotic Arm Simulation\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.SceneGraph.dll
+D:\Work\3D Scanner\Robotic Arm Simulation\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.WinForms.dll
+D:\Work\3D Scanner\Robotic Arm Simulation\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csprojAssemblyReference.cache
+D:\Work\3D Scanner\Robotic Arm Simulation\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.Properties.Resources.resources
+D:\Work\3D Scanner\Robotic Arm Simulation\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.SharpGLForm.resources
+D:\Work\3D Scanner\Robotic Arm Simulation\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.GenerateResource.cache
+D:\Work\3D Scanner\Robotic Arm Simulation\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CoreCompileInputs.cache
+D:\Work\3D Scanner\Robotic Arm Simulation\robot\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CopyComplete
+D:\Work\Robotic System\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe.config
+D:\Work\Robotic System\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe
+D:\Work\Robotic System\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.pdb
+D:\Work\Robotic System\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.dll
+D:\Work\Robotic System\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.SceneGraph.dll
+D:\Work\Robotic System\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.WinForms.dll
+D:\Work\Robotic System\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csprojAssemblyReference.cache
+D:\Work\Robotic System\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.Properties.Resources.resources
+D:\Work\Robotic System\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.SharpGLForm.resources
+D:\Work\Robotic System\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.GenerateResource.cache
+D:\Work\Robotic System\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CoreCompileInputs.cache
+D:\Work\Robotic System\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CopyComplete
+D:\Work\Robotic System\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.exe
+D:\Work\Robotic System\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.pdb
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArmSimulation1025\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csprojAssemblyReference.cache
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArmSimulation1025\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.Properties.Resources.resources
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArmSimulation1025\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.SharpGLForm.resources
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArmSimulation1025\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.GenerateResource.cache
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArmSimulation1025\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CoreCompileInputs.cache
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArmSimulation1025\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.exe
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArmSimulation1025\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.pdb
+D:\Work\Robotic System\RoboticArmSimulation1025_update\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe.config
+D:\Work\Robotic System\RoboticArmSimulation1025_update\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.exe
+D:\Work\Robotic System\RoboticArmSimulation1025_update\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.pdb
+D:\Work\Robotic System\RoboticArmSimulation1025_update\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.Properties.Resources.resources
+D:\Work\Robotic System\RoboticArmSimulation1025_update\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.SharpGLForm.resources
+D:\Work\Robotic System\RoboticArmSimulation1025_update\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.GenerateResource.Cache
+D:\Work\Robotic System\RoboticArmSimulation1025_update\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe
+D:\Work\Robotic System\RoboticArmSimulation1025_update\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.pdb
+D:\Work\Robotic System\RoboticArmSimulation1025_update\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.dll
+D:\Work\Robotic System\RoboticArmSimulation1025_update\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.SceneGraph.dll
+D:\Work\Robotic System\RoboticArmSimulation1025_update\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.WinForms.dll
+D:\Work\Robotic System\RoboticArmSimulation1025_update\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csprojAssemblyReference.cache
+D:\Work\Robotic System\RoboticArmSimulation1025_update\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CoreCompileInputs.cache
+D:\Work\Robotic System\RoboticArmSimulation1025_update\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CopyComplete
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArm\RoboticArm\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe.config
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArm\RoboticArm\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArm\RoboticArm\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.pdb
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArm\RoboticArm\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.dll
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArm\RoboticArm\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.SceneGraph.dll
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArm\RoboticArm\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.WinForms.dll
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArm\RoboticArm\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csprojAssemblyReference.cache
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArm\RoboticArm\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.Properties.Resources.resources
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArm\RoboticArm\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.SharpGLForm.resources
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArm\RoboticArm\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.GenerateResource.cache
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArm\RoboticArm\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CoreCompileInputs.cache
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArm\RoboticArm\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CopyComplete
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArm\RoboticArm\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.exe
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\RoboticArm\RoboticArm\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.pdb
+D:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe.config
+D:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe
+D:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.pdb
+D:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.dll
+D:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.SceneGraph.dll
+D:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.WinForms.dll
+D:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csprojAssemblyReference.cache
+D:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.Properties.Resources.resources
+D:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.SharpGLForm.resources
+D:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.GenerateResource.cache
+D:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CoreCompileInputs.cache
+D:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CopyComplete
+D:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.exe
+D:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.pdb
+G:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe.config
+G:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe
+G:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.pdb
+G:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.dll
+G:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.SceneGraph.dll
+G:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\bin\Debug\SharpGL.WinForms.dll
+G:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.Properties.Resources.resources
+G:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.SharpGLForm.resources
+G:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.GenerateResource.cache
+G:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CoreCompileInputs.cache
+G:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CopyComplete
+G:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.exe
+G:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.pdb
+G:\Work\DeltaArmSimulation_1026\SharpGLWinformsApplication1\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csprojAssemblyReference.cache
+D:\Work\Robotic System\HMI_Draft\SharpGLWinformsApplication_New\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csprojAssemblyReference.cache
+D:\Work\Robotic System\HMI_Draft\SharpGLWinformsApplication_New\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.Properties.Resources.resources
+D:\Work\Robotic System\HMI_Draft\SharpGLWinformsApplication_New\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.SharpGLForm.resources
+D:\Work\Robotic System\HMI_Draft\SharpGLWinformsApplication_New\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.GenerateResource.cache
+D:\Work\Robotic System\HMI_Draft\SharpGLWinformsApplication_New\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CoreCompileInputs.cache
+D:\Work\Robotic System\HMI_Draft\SharpGLWinformsApplication_New\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.exe
+D:\Work\Robotic System\HMI_Draft\SharpGLWinformsApplication_New\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.pdb
+D:\Work\Robotic System\HMI_Draft\SharpGLWinformsApplication_New\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe.config
+D:\Work\Robotic System\HMI_Draft\SharpGLWinformsApplication_New\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe
+D:\Work\Robotic System\HMI_Draft\SharpGLWinformsApplication_New\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.pdb
+D:\Work\Robotic System\HMI_Draft\SharpGLWinformsApplication_New\SharpGLWinformsApplication1\bin\Debug\SharpGL.dll
+D:\Work\Robotic System\HMI_Draft\SharpGLWinformsApplication_New\SharpGLWinformsApplication1\bin\Debug\SharpGL.SceneGraph.dll
+D:\Work\Robotic System\HMI_Draft\SharpGLWinformsApplication_New\SharpGLWinformsApplication1\bin\Debug\SharpGL.WinForms.dll
+D:\Work\Robotic System\HMI_Draft\SharpGLWinformsApplication_New\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CopyComplete
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\SharpGLWinforms_1031_02\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe.config
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\SharpGLWinforms_1031_02\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\SharpGLWinforms_1031_02\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.pdb
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\SharpGLWinforms_1031_02\SharpGLWinformsApplication1\bin\Debug\SharpGL.dll
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\SharpGLWinforms_1031_02\SharpGLWinformsApplication1\bin\Debug\SharpGL.SceneGraph.dll
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\SharpGLWinforms_1031_02\SharpGLWinformsApplication1\bin\Debug\SharpGL.WinForms.dll
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\SharpGLWinforms_1031_02\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csprojAssemblyReference.cache
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\SharpGLWinforms_1031_02\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.Properties.Resources.resources
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\SharpGLWinforms_1031_02\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.SharpGLForm.resources
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\SharpGLWinforms_1031_02\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.GenerateResource.cache
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\SharpGLWinforms_1031_02\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CoreCompileInputs.cache
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\SharpGLWinforms_1031_02\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CopyComplete
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\SharpGLWinforms_1031_02\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.exe
+C:\Users\Nhu\Documents\Visual Studio 2017\Exercises\CSharp_Projects\SharpGLWinforms_1031_02\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.pdb
+D:\Work\Robotic System\HMI_Draft\SharpGLWinforms_1101\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe.config
+D:\Work\Robotic System\HMI_Draft\SharpGLWinforms_1101\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.exe
+D:\Work\Robotic System\HMI_Draft\SharpGLWinforms_1101\SharpGLWinformsApplication1\bin\Debug\SharpGLWinformsApplication1.pdb
+D:\Work\Robotic System\HMI_Draft\SharpGLWinforms_1101\SharpGLWinformsApplication1\bin\Debug\SharpGL.dll
+D:\Work\Robotic System\HMI_Draft\SharpGLWinforms_1101\SharpGLWinformsApplication1\bin\Debug\SharpGL.SceneGraph.dll
+D:\Work\Robotic System\HMI_Draft\SharpGLWinforms_1101\SharpGLWinformsApplication1\bin\Debug\SharpGL.WinForms.dll
+D:\Work\Robotic System\HMI_Draft\SharpGLWinforms_1101\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csprojAssemblyReference.cache
+D:\Work\Robotic System\HMI_Draft\SharpGLWinforms_1101\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.Properties.Resources.resources
+D:\Work\Robotic System\HMI_Draft\SharpGLWinforms_1101\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.SharpGLForm.resources
+D:\Work\Robotic System\HMI_Draft\SharpGLWinforms_1101\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.GenerateResource.cache
+D:\Work\Robotic System\HMI_Draft\SharpGLWinforms_1101\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CoreCompileInputs.cache
+D:\Work\Robotic System\HMI_Draft\SharpGLWinforms_1101\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.csproj.CopyComplete
+D:\Work\Robotic System\HMI_Draft\SharpGLWinforms_1101\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.exe
+D:\Work\Robotic System\HMI_Draft\SharpGLWinforms_1101\SharpGLWinformsApplication1\obj\x86\Debug\SharpGLWinformsApplication1.pdb
+C:\Users\Berkay ABAY\Desktop\Delta-3D-Robot-master\Delta-3D-Robot-master\bin\Debug\SharpGLWinformsApplication1.exe.config
+C:\Users\Berkay ABAY\Desktop\Delta-3D-Robot-master\Delta-3D-Robot-master\obj\x86\Debug\SharpGLWinformsApplication1.exe
+C:\Users\Berkay ABAY\Desktop\Delta-3D-Robot-master\Delta-3D-Robot-master\obj\x86\Debug\SharpGLWinformsApplication1.pdb
+C:\Users\Berkay ABAY\Desktop\Delta-3D-Robot-master\Delta-3D-Robot-master\bin\Debug\SharpGLWinformsApplication1.exe
+C:\Users\Berkay ABAY\Desktop\Delta-3D-Robot-master\Delta-3D-Robot-master\bin\Debug\SharpGLWinformsApplication1.pdb
+C:\Users\Berkay ABAY\Desktop\Delta-3D-Robot-master\Delta-3D-Robot-master\bin\Debug\SharpGL.dll
+C:\Users\Berkay ABAY\Desktop\Delta-3D-Robot-master\Delta-3D-Robot-master\bin\Debug\SharpGL.SceneGraph.dll
+C:\Users\Berkay ABAY\Desktop\Delta-3D-Robot-master\Delta-3D-Robot-master\bin\Debug\SharpGL.WinForms.dll
+C:\Users\Berkay ABAY\Desktop\Delta-3D-Robot-master\Delta-3D-Robot-master\obj\x86\Debug\SharpGLWinformsApplication1.csprojResolveAssemblyReference.cache
+C:\Users\Berkay ABAY\Desktop\Delta-3D-Robot-master\Delta-3D-Robot-master\obj\x86\Debug\SharpGLWinformsApplication1.Properties.Resources.resources
+C:\Users\Berkay ABAY\Desktop\Delta-3D-Robot-master\Delta-3D-Robot-master\obj\x86\Debug\SharpGLWinformsApplication1.SharpGLForm.resources
+C:\Users\Berkay ABAY\Desktop\Delta-3D-Robot-master\Delta-3D-Robot-master\obj\x86\Debug\SharpGLWinformsApplication1.csproj.GenerateResource.Cache
+C:\Users\Berkay ABAY\Desktop\Delta-3D-Robot-master\Delta-3D-Robot-master\bin\Debug\TwinCAT.Ads.dll
+C:\Users\Berkay ABAY\Desktop\Delta-3D-Robot-master\Delta-3D-Robot-master\bin\Debug\TwinCAT.Ads.xml
+C:\Users\Berkay ABAY\Desktop\Delta-3D-Robot-master\Delta-3D-Robot-master\obj\x86\Debug\Interop.TcAdsDll.dll
+C:\Users\Berkay ABAY\Desktop\Delta-3D-Robot-master\Delta-3D-Robot-master\obj\x86\Debug\SharpGLWinformsApplication1.csproj.ResolveComReference.cache
+C:\Users\Berkay ABAY\Desktop\OpenGL_deneme\Delta-3D-Robot-master\bin\Debug\SharpGLWinformsApplication1.exe.config
+C:\Users\Berkay ABAY\Desktop\OpenGL_deneme\Delta-3D-Robot-master\obj\x86\Debug\Interop.TcAdsDll.dll
+C:\Users\Berkay ABAY\Desktop\OpenGL_deneme\Delta-3D-Robot-master\obj\x86\Debug\SharpGLWinformsApplication1.csproj.ResolveComReference.cache
+C:\Users\Berkay ABAY\Desktop\OpenGL_deneme\Delta-3D-Robot-master\obj\x86\Debug\SharpGLWinformsApplication1.exe
+C:\Users\Berkay ABAY\Desktop\OpenGL_deneme\Delta-3D-Robot-master\obj\x86\Debug\SharpGLWinformsApplication1.pdb
+C:\Users\Berkay ABAY\Desktop\OpenGL_deneme\Delta-3D-Robot-master\bin\Debug\SharpGLWinformsApplication1.exe
+C:\Users\Berkay ABAY\Desktop\OpenGL_deneme\Delta-3D-Robot-master\bin\Debug\SharpGLWinformsApplication1.pdb
+C:\Users\Berkay ABAY\Desktop\OpenGL_deneme\Delta-3D-Robot-master\bin\Debug\SharpGL.dll
+C:\Users\Berkay ABAY\Desktop\OpenGL_deneme\Delta-3D-Robot-master\bin\Debug\SharpGL.SceneGraph.dll
+C:\Users\Berkay ABAY\Desktop\OpenGL_deneme\Delta-3D-Robot-master\bin\Debug\SharpGL.WinForms.dll
+C:\Users\Berkay ABAY\Desktop\OpenGL_deneme\Delta-3D-Robot-master\bin\Debug\TwinCAT.Ads.dll
+C:\Users\Berkay ABAY\Desktop\OpenGL_deneme\Delta-3D-Robot-master\bin\Debug\TwinCAT.Ads.xml
+C:\Users\Berkay ABAY\Desktop\OpenGL_deneme\Delta-3D-Robot-master\obj\x86\Debug\SharpGLWinformsApplication1.Properties.Resources.resources
+C:\Users\Berkay ABAY\Desktop\OpenGL_deneme\Delta-3D-Robot-master\obj\x86\Debug\SharpGLWinformsApplication1.SharpGLForm.resources
+C:\Users\Berkay ABAY\Desktop\OpenGL_deneme\Delta-3D-Robot-master\obj\x86\Debug\SharpGLWinformsApplication1.csproj.GenerateResource.Cache
+C:\Users\Berkay ABAY\Desktop\OpenGL_deneme\Delta-3D-Robot-master\obj\x86\Debug\SharpGLWinformsApplication1.csprojResolveAssemblyReference.cache

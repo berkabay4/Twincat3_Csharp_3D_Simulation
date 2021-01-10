@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <GVL Name="GVL_Process" Id="{3fcd7e6f-6aa7-44c5-941d-32659a62bece}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	bAllAxesEnablePLC	: BOOL;
+	bAllAxesEnable		: BOOL;
+	bAllAxesEnabled		: BOOL;
+	bAllAxesReset		: BOOL;
+	bNciStartPLC		: BOOL;
+	
+	bEmergencyOnPanel 	AT%I*	: BOOL;
+	fTrigbEmergency				: F_TRIG;
+	rTrigbEmergency				: R_TRIG;
+	bGreenBtnOnPanel	AT%I*	: BOOL;
+	nStateEmergency				: INT;
+	
+	bManualSelectX		: BOOL;
+	bManualSelectY		: BOOL;
+	bManualSelectZ		: BOOL;
+	nSizeSelectX		: INT := 27;
+	nSizeSelectY		: INT := 27;
+	nSizeSelectZ		: INT := 27;
+	
+	nAutoManMode		: BOOL;
+	
+	bMessageBubbleAuto	: BOOL;
+	bMessageBubbleMan	: BOOL;
+	
+	stOpcUaVariablesW	: ST_OpcUAVariablesW;
+	stOpcUaVariablesR	: ST_OpcUAVariablesR;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <POU Name="PRG_Kinematic" Id="{26e299b5-ce78-4f1b-9b39-fd7b5add4dea}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_Kinematic
+VAR_INPUT
+		bExecuteKinConfigGroup	: BOOL;
+		bCartesianMode			: BOOL := TRUE;
+		bExecuteKinResetGroup	: BOOL;
+END_VAR
+VAR
+	fbKinConfigGroup			: FB_KinConfigGroup;
+	fbKinResetGroup				: FB_KinResetGroup;
+	eKinStatus					: E_KinStatus;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+GVL_Kin.stAxesList.nAxisIdsAcs[1]	:= AxisM1_B.NcToPlc.AxisId;
+GVL_Kin.stAxesList.nAxisIdsAcs[2]	:= AxisM2_C.NcToPlc.AxisId;
+GVL_Kin.stAxesList.nAxisIdsAcs[3]	:= AxisM3_A.NcToPlc.AxisId;
+
+GVL_Kin.stAxesList.nAxisIdsMcs[1]	:= AxisX.NcToPlc.AxisId;
+GVL_Kin.stAxesList.nAxisIdsMcs[2]	:= AxisY.NcToPlc.AxisId;
+GVL_Kin.stAxesList.nAxisIdsMcs[3]	:= AxisZ.NcToPlc.AxisId;
+
+ItpSetOverridePercent(100.0, GVL_Kin.stKinFromPLC);
+
+fbKinConfigGroup(
+	bExecute		:= bExecuteKinConfigGroup, 
+	bCartesianMode	:= bCartesianMode, 
+	stAxesList		:= GVL_Kin.stAxesList, 
+	stKinRefIn		:= GVL_Kin.stKinToPLC);	
+	
+fbKinResetGroup(
+	bExecute		:= bExecuteKinResetGroup, 
+	nItpChannelId	:= ItpGetChannelId(GVL_Kin.stKinToPLC), 
+	stKinRefIn		:= GVL_Kin.stKinToPLC, 
+	stAxesList		:= GVL_Kin.stAxesList);
+	
+	]]></ST>
+    </Implementation>
+    <LineIds Name="PRG_Kinematic">
+      <LineId Id="3" Count="22" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

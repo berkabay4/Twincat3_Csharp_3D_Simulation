@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <DUT Name="ST_OpcUAVariablesW" Id="{d221fc3d-12e8-4a3e-92d1-e49d925c8377}">
+    <Declaration><![CDATA[TYPE ST_OpcUAVariablesW :
+STRUCT
+	fActPosX		: LREAL;
+	fActPosY		: LREAL;
+	fActPosZ		: LREAL;
+	fActPosM1		: LREAL;
+	fActPosM2		: LREAL;
+	fActPosM3		: LREAL;
+	
+	fActVeloX		: LREAL;
+	fActVeloY		: LREAL;
+	fActVeloZ		: LREAL;
+	fActVeloM1		: LREAL;
+	fActVeloM2		: LREAL;
+	fActVeloM3		: LREAL;
+	
+	fLagDistanceX	: LREAL;
+	fLagDistanceY	: LREAL;
+	fLagDistanceZ	: LREAL;
+	fLagDistanceM1	: LREAL;
+	fLagDistanceM2	: LREAL;
+	fLagDistanceM3	: LREAL;
+	
+	sNciActLine		: STRING;
+	sNciLines		: STRING;
+	sFileNameVisu	: STRING;
+	
+	bEnabledX		: BOOL;
+	bEnabledY		: BOOL;
+	bEnabledZ		: BOOL;
+	bEnabledM1		: BOOL;
+	bEnabledM2		: BOOL;
+	bEnabledM3		: BOOL;
+		
+	bNciRunning		: BOOL;
+	bNciStopped		: BOOL;
+	bNciFinished	: BOOL;
+
+	bErrorX			: BOOL;
+	bErrorY			: BOOL;
+	bErrorZ			: BOOL;
+	bErrorM1		: BOOL;
+	bErrorM2		: BOOL;
+	bErrorM3		: BOOL;
+	
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

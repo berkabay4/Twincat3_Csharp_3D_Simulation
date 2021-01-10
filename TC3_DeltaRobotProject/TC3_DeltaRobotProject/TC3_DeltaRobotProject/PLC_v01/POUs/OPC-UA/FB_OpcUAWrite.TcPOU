@@ -1,0 +1,336 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <POU Name="FB_OpcUAWrite" Id="{68d8f4ae-8b36-4c10-ba1a-c8ed811ed003}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_OpcUAWrite
+VAR_INPUT
+	bExecute				: BOOL;
+	sServerURL				: STRING(MAX_STRING_LENGTH) := 'opc.tcp://tr.kilit.com:4843';
+	sNameSpace				: STRING(MAX_STRING_LENGTH)	:= 'urn:CX-27E172:BeckhoffAutomation:Ua:PLC1';
+	sNodeNameW				: STRING(MAX_STRING_LENGTH)	:= 'PRG_Delta.arrDataW1';
+	sNodeNameR				: STRING(MAX_STRING_LENGTH)	:= 'PRG_Delta.arrDataR1';
+	nVariableSizeW			: UINT;
+	pVariableAddrW			: PVOID;
+	nVariableSizeR			: UINT;
+	pVariableAddrR			: PVOID;
+	tWaitDataExchange		: TIME :=T#3S;
+	tWaitReConnect			: TIME :=T#3S;
+END_VAR
+VAR_OUTPUT
+	bBusy					: BOOL;
+	bError					: BOOL;
+END_VAR
+VAR	
+	fbUaConnect				: UA_Connect;
+	fbUaGetNamespaceIndex	: UA_GetNamespaceIndex;
+	fbUaNodeGetHandle		: UA_NodeGetHandle;
+	fbUaWrite				: UA_Write;
+	fbUARead				: UA_Read;
+	fbUaNodeReleaseHandle	: UA_NodeReleaseHandle;
+	fbUaDisconnect			: UA_Disconnect;
+	stNodeID				: ST_UANodeID;
+	stSessionConnectInfo	: ST_UASessionConnectInfo;
+	stNodeAddInfo			: ST_UANodeAdditionalInfo;
+	fbWaitSession			: TON;
+	fbWaitDataExchange		: TON;
+	tWaitDisconnect			: TON;
+	arrOpcDataW				: ARRAY[1..420] OF BYTE;
+	arrOpcDataR				: ARRAY[1..8] OF BYTE;
+	nState					: INT;
+	nErrorID				: UDINT;
+	nConnectionHdl			: DWORD;
+	nNamespaceIndex			: UINT;					
+	nNodeHdlW				: DWORD;
+	nNodeHdlR				: DWORD;
+	tWaitSessionTimeout		: TON;
+END_VAR
+VAR CONSTANT
+	cnMaxConnHandle			: INT	:= 20;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+IF nState > 10 AND nState < 80 THEN 
+	IF NOT bExecute THEN 
+		fbWaitSession(IN:= FALSE);
+		fbWaitDataExchange(IN:= FALSE);
+		nState 			:= 80;
+	END_IF
+END_IF
+
+
+
+(*OPC UA Writing Sequence*)
+CASE nState OF
+	
+0:
+	fbUaConnect									(Execute := FALSE);
+	fbUaGetNamespaceIndex						(Execute := FALSE);
+	fbUaNodeGetHandle							(Execute := FALSE);
+	fbUaWrite									(Execute := FALSE);
+	fbUaNodeReleaseHandle						(Execute := FALSE);
+	fbUaDisconnect								(Execute := FALSE);
+	bBusy										:= FALSE;
+	bError										:= FALSE;
+	
+	stSessionConnectInfo.tConnectTimeout 		:= T#1S;
+	stSessionConnectInfo.tSessionTimeout 		:= T#1S;
+	stSessionConnectInfo.sApplicationName		:= '';
+	stSessionConnectInfo.eSecurityMode 			:= eUASecurityMsgMode_None;
+	stSessionConnectInfo.eSecurityPolicyUri 	:= eUASecurityPolicy_None;
+	stSessionConnectInfo.eTransportProfileUri 	:= eUATransportProfileUri_UATcp;
+	
+	IF bExecute THEN
+		nState	:= 10;
+	END_IF
+	
+10:
+	fbUaConnect(
+		Execute				:= TRUE,
+		ServerURL			:= sServerURL,
+		SessionConnectInfo	:= stSessionConnectInfo,
+		Timeout				:= T#5S );
+				
+	IF NOT fbUaConnect.Busy THEN
+		fbUaConnect(Execute := FALSE);
+		IF NOT fbUaConnect.Error THEN
+			(* session open *)
+			nConnectionHdl	:= fbUaConnect.ConnectionHdl;
+			bBusy 			:=TRUE;
+			nState			:= 30;
+		ELSE
+			bError			:= TRUE;
+			nErrorID		:= fbUaConnect.ErrorID;
+			nState			:= 20;
+		END_IF
+	END_IF
+	
+20:
+	fbUaConnect			(Execute := FALSE);
+	fbWaitSession		(IN:= TRUE, PT:= tWaitReConnect);
+	IF fbWaitSession.Q THEN
+		fbWaitSession	(IN:= FALSE);
+		nState 			:= 10;
+	END_IF
+	
+30:
+	fbUaGetNamespaceIndex(
+		Execute			:= TRUE,
+		ConnectionHdl	:= nConnectionHdl,
+		NamespaceUri	:= sNameSpace,
+		NamespaceIndex	=> nNamespaceIndex );
+
+	IF NOT fbUaGetNamespaceIndex.Busy THEN
+		fbUaGetNamespaceIndex(Execute := FALSE);
+
+		IF NOT fbUaGetNamespaceIndex.Error THEN
+			nState 		:= 40;
+		ELSE
+			bError		:= TRUE;
+			nErrorID	:= fbUaGetNamespaceIndex.ErrorID;
+			nState 		:= 100;
+		END_IF
+	END_IF
+	
+40:
+	stNodeID.eIdentifierType 	:= eUAIdentifierType_String;
+	stNodeID.nNamespaceIndex 	:= nNamespaceIndex;
+	stNodeID.sIdentifier		:= sNodeNameW;
+	
+	fbUaNodeGetHandle(
+		Execute					:= TRUE,
+		ConnectionHdl			:= nConnectionHdl,
+		NodeID					:= stNodeID,
+		NodeHdl					=> nNodeHdlW);
+
+	IF NOT fbUaNodeGetHandle.Busy THEN
+		fbUaNodeGetHandle(Execute := FALSE);
+
+		IF NOT fbUaNodeGetHandle.Error THEN
+			bError				:= FALSE;
+			nState				:= 45;
+		ELSE
+			bError				:= TRUE;
+			nErrorID			:= fbUaNodeGetHandle.ErrorID;
+			IF nConnectionHdl <>0 THEN 
+				nState 			:= 70; (* Connection is Lost. Wait and try again later *)
+			ELSE
+				nState 			:= 100; (* idle *)
+			END_IF
+		END_IF
+	END_IF
+	
+45:
+	stNodeID.eIdentifierType 	:= eUAIdentifierType_String;
+	stNodeID.nNamespaceIndex 	:= nNamespaceIndex;
+	stNodeID.sIdentifier		:= sNodeNameR;
+	
+	fbUaNodeGetHandle(
+		Execute					:= TRUE,
+		ConnectionHdl			:= nConnectionHdl,
+		NodeID					:= stNodeID,
+		NodeHdl					=> nNodeHdlR);
+
+	IF NOT fbUaNodeGetHandle.Busy THEN
+		fbUaNodeGetHandle(Execute := FALSE);
+
+		IF NOT fbUaNodeGetHandle.Error THEN
+			bError				:= FALSE;
+			nState				:= 50;
+		ELSE
+			bError				:= TRUE;
+			nErrorID			:= fbUaNodeGetHandle.ErrorID;
+			IF nConnectionHdl <>0 THEN 
+				nState 			:= 70; (* Connection is Lost. Wait and try again later *)
+			ELSE
+				nState 			:= 100; (* idle *)
+			END_IF
+		END_IF
+	END_IF
+	
+50:
+	MEMCPY(ADR(arrOpcDataW) , pVariableAddrW , nVariableSizeW);
+	nState	:= 51;
+	
+51:
+	fbUaWrite(
+		Execute			:= TRUE,
+		ConnectionHdl	:= nConnectionHdl,
+		NodeHdl			:= nNodeHdlW,
+		stNodeAddInfo	:= stNodeAddInfo,
+		cbData			:= SIZEOF(arrOpcDataW),
+		pVariable		:= ADR(arrOpcDataW) );
+
+	IF NOT fbUaWrite.Busy THEN
+		fbUaWrite(
+			Execute 	:= FALSE,
+			pVariable	:= ADR(arrOpcDataW));
+
+		IF NOT fbUaWrite.Error THEN
+			bError		:= FALSE;
+			nState 		:= 55; //cyclic writing sequence
+		ELSE
+			bError		:= TRUE;
+			nErrorID	:= fbUaWrite.ErrorID;
+			nState 		:= 70; //if Connection is gone ,wait and try again later 
+		END_IF
+	END_IF
+	
+55:
+	fbUaRead(
+		Execute			:= TRUE,
+		ConnectionHdl	:= nConnectionHdl,
+		NodeHdl			:= nNodeHdlR,
+		stNodeAddInfo	:= stNodeAddInfo,
+		cbData			:= SIZEOF(arrOpcDataR),
+		pVariable		:= ADR(arrOpcDataR) );
+
+	IF NOT fbUaRead.Busy THEN
+		fbUaRead(
+			Execute 	:= FALSE,
+			pVariable	:= ADR(arrOpcDataR));
+
+		IF NOT fbUaRead.Error THEN
+			bError		:= FALSE;
+			nState 		:= 56; //cyclic writing sequence
+		ELSE
+			bError		:= TRUE;
+			nErrorID	:= fbUaRead.ErrorID;
+			nState 		:= 70; //if Connection is gone ,wait and try again later 
+		END_IF
+	END_IF
+	
+56:
+	MEMCPY(pVariableAddrR , ADR(arrOpcDataR) , nVariableSizeR);
+	nState	:= 60;
+	
+60:
+	fbWaitDataExchange(IN:= TRUE, PT:= tWaitDataExchange);
+	IF fbWaitDataExchange.Q THEN
+		fbWaitDataExchange	(IN:= FALSE);
+		nState 				:= 50;
+	END_IF
+
+70:
+	fbWaitSession(IN:= TRUE, PT:= tWaitReConnect);
+	IF fbWaitSession.Q THEN
+		fbWaitSession(IN:= FALSE);
+		nState 				:= 40;
+	END_IF
+	
+80:
+	fbUaNodeReleaseHandle(
+		Execute				:= TRUE,
+		ConnectionHdl		:= nConnectionHdl,
+		NodeHdl				:= nNodeHdlW );
+
+	IF NOT fbUaNodeReleaseHandle.Busy THEN
+		fbUaNodeReleaseHandle(Execute := FALSE);
+
+		IF NOT fbUaNodeReleaseHandle.Error THEN
+			nState 			:= 81;
+		ELSE
+			bError			:= TRUE;
+			fbUaNodeReleaseHandle(Execute := FALSE);
+			nErrorID		:= fbUaNodeReleaseHandle.ErrorID;
+			nState 			:= 110; (* idle *)
+		END_IF
+	END_IF
+	
+81:
+	fbUaNodeReleaseHandle(
+		Execute				:= TRUE,
+		ConnectionHdl		:= nConnectionHdl,
+		NodeHdl				:= nNodeHdlR );
+
+	IF NOT fbUaNodeReleaseHandle.Busy THEN
+		fbUaNodeReleaseHandle(Execute := FALSE);
+
+		IF NOT fbUaNodeReleaseHandle.Error THEN
+			nState 			:= 100;
+		ELSE
+			bError			:= TRUE;
+			fbUaNodeReleaseHandle(Execute := FALSE);
+			nErrorID		:= fbUaNodeReleaseHandle.ErrorID;
+			nState 			:= 110; (* idle *)
+		END_IF
+	END_IF
+	
+100:
+	fbUaDisconnect(
+		Execute				:= TRUE,
+		Timeout 			:= T#15S,
+		ConnectionHdl		:= nConnectionHdl );
+
+	IF NOT fbUaDisconnect.Busy THEN
+		fbUaDisconnect(Execute:= FALSE,ConnectionHdl:= nConnectionHdl );
+		IF NOT fbUaDisconnect.Error THEN
+			(* session closed *)
+			nConnectionHdl	:= 0;
+			bBusy 			:= FALSE; 
+			nState 			:= 0;
+			IF NOT bError THEN 
+				bBusy 		:= FALSE;
+			END_IF
+		ELSE
+			//if session handle was invalid 
+			nConnectionHdl	:= 0;
+			bBusy 			:= FALSE; 
+			nState 			:= 110;
+		END_IF
+	END_IF
+	
+110:
+	tWaitSessionTimeout(IN := TRUE, PT := (tWaitReConnect) );
+	IF tWaitSessionTimeout.Q THEN 
+		tWaitSessionTimeout(IN :=FALSE);
+		nState := 0;
+	END_IF
+	
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_OpcUAWrite">
+      <LineId Id="3" Count="277" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

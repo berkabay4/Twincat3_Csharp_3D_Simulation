@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <DUT Name="ST_AxisInterfaceIn" Id="{978ab495-4178-4e9d-8a7d-768ad46aea6b}">
+    <Declaration><![CDATA[TYPE ST_AxisInterfaceIn :
+STRUCT
+	xEnable			: BOOL;
+	xReset			: BOOL;
+	xDriveReset		: BOOL;
+	xMove			: BOOL;
+	xHome			: BOOL;
+	xHomeSensor		: BOOL;
+	xJogFw			: BOOL;
+	xJogBw			: BOOL;
+	fHomePos		: LREAL;
+	fSetPos			: LREAL;
+	fSetVelo		: LREAL;
+	fSetAcc			: LREAL;
+	fSetDec			: LREAL;
+	fSetJerk		: LREAL;
+	fJogVelo		: LREAL	:= 20;
+	fOverride		: LREAL	:= 100.0;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

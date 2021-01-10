@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.0">
+  <POU Name="MAIN" Id="{2020bd6b-90a0-4fc7-9a1c-76bd8c902114}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	sFilePathName	: STRING := 'C:\TwinCAT\CNC\TestNci1.txt';
+	sErrorMessage	: STRING := '';
+	bOpen			: BOOL;
+	bClose 			: BOOL;
+	bSave 			: BOOL;
+	bNew			: BOOL;
+	nErrorCode		: USINT;
+	nLineNumber		: USINT;
+	bEnable: BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+sErrorMessage	:= VisuFctTextEditorGetErrorText(usiErrCode := nErrorCode);
+
+PRG_NcControl();
+//PRG_MFuncControl();
+PRG_Kinematic();
+
+//PRG_Process();
+
+//PRG_OpcUA();
+
+//POU_VisButton();
+POU_Process_Deneme();
+
+
+	PRG_Kinematic.bExecuteKinConfigGroup;
+	
+	
+	stAxisX.In.fSetPos;
+	stAxisY.In.fSetPos;
+	stAxisZ.In.fSetPos;
+
+	
+	stAxisX.In.xMove;
+	stAxisY.In.xMove;
+	stAxisZ.In.xMove;
+
+
+
+AxisM1PosValue	:=	LMOD(AxisM1_B.NcToPlc.ModuloActPos,360);
+AxisM2PosValue	:=	LMOD(AxisM2_C.NcToPlc.ModuloActPos,360);
+AxisM3PosValue	:=	LMOD(AxisM3_A.NcToPlc.ModuloActPos,360);
+
+
+
+	
+	
+	AxisXVal	:=	AxisX.NcToPlc.ActPos;
+	AxisYVal	:=	AxisY.NcToPlc.ActPos;
+	AxisZVal	:=	AxisZ.NcToPlc.ActPos;
+	
+
+
+
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="50" Count="0" />
+      <LineId Id="3" Count="5" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="180" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="144" Count="1" />
+      <LineId Id="85" Count="1" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="91" Count="0" />
+      <LineId Id="93" Count="0" />
+      <LineId Id="141" Count="0" />
+      <LineId Id="140" Count="0" />
+      <LineId Id="92" Count="0" />
+      <LineId Id="96" Count="0" />
+      <LineId Id="161" Count="1" />
+      <LineId Id="164" Count="2" />
+      <LineId Id="163" Count="0" />
+      <LineId Id="159" Count="0" />
+      <LineId Id="99" Count="0" />
+      <LineId Id="123" Count="0" />
+      <LineId Id="167" Count="0" />
+      <LineId Id="125" Count="2" />
+      <LineId Id="102" Count="0" />
+      <LineId Id="109" Count="0" />
+      <LineId Id="104" Count="1" />
+      <LineId Id="101" Count="0" />
+      <LineId Id="100" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

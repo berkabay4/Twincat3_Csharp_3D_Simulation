@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <GVL Name="GVL_Kin" Id="{0e2d968a-070d-47eb-a8f9-e032c7652a19}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	stKinToPLC			AT%I*	: NCTOPLC_NCICHANNEL_REF;
+	stKinFromPLC		AT%Q*	: PLCTONC_NCICHANNEL_REF;
+	
+	stAxesList					: ST_KinAxes;
+	
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

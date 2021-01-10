@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.6">
+  <POU Name="FB_NciWriteToolParams" Id="{a1ed9cb4-f35d-492e-a07c-4b9b0fa8f303}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_NciWriteToolParams
+VAR_INPUT
+	bExecute			: BOOL;
+END_VAR
+VAR_IN_OUT
+	sNciToPLC			: NCTOPLC_NCICHANNEL_REF;
+END_VAR
+VAR_OUTPUT
+	bDone				: BOOL;
+	bBusy				: BOOL;
+	bError				: BOOL;
+	nErrorId			: UDINT;
+END_VAR
+VAR
+	fbWriteToolDesc		: ItpWriteToolDescEx;
+	nState				: INT;
+	nLastState			: INT;
+	nToolIndex			: UDINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+CASE nState OF
+
+0:
+	bDone		:= FALSE;
+	bBusy		:= FALSE;
+	bError		:= FALSE;
+	nErrorId	:= 0;
+
+	IF bExecute THEN
+		nToolIndex	:= 1;
+		bBusy		:= TRUE;
+		nState		:= 10;
+		nLastState	:= nState;
+	END_IF	
+	
+10:
+	fbWriteToolDesc(
+		bExecute	:= TRUE, 
+		nDNo		:= nToolIndex, 
+		tTimeOut	:= T#200MS, 
+		sNciToPlc	:= sNciToPLC, 
+		sToolDesc	:= stNciToolParams[nToolIndex]);
+		
+	IF NOT fbWriteToolDesc.bBusy AND NOT fbWriteToolDesc.bErr THEN
+		fbWriteToolDesc( bExecute := FALSE, sNciToPlc := sNciToPLC, sToolDesc := stNciToolParams[nToolIndex] ); 
+		nState		:= 20;
+		nLastState	:= nState;
+	ELSIF fbWriteToolDesc.bErr THEN
+		fbWriteToolDesc( bExecute := FALSE, sNciToPlc := sNciToPLC, sToolDesc := stNciToolParams[nToolIndex] ); 
+		bError		:= TRUE;
+		nErrorId	:= fbWriteToolDesc.nErrId;
+		nState		:= 900;
+	END_IF
+	
+20:
+	fbWriteToolDesc( bExecute := FALSE, sNciToPlc := sNciToPLC, sToolDesc := stNciToolParams[nToolIndex] );
+	
+	IF UDINT_TO_DINT(nToolIndex) < cnMaxToolNumber THEN
+		nToolIndex	:= nToolIndex + 1;
+		nState		:= 10;
+		nLastState	:= nState;
+	ELSE 
+		nState		:= 30;
+		nLastState	:= nState;
+	END_IF
+	
+30:
+	bBusy	:= FALSE;
+	bDone	:= TRUE;
+	
+	IF NOT bExecute THEN
+		nState		:= 0;
+		nLastState	:= nState;
+	END_IF
+	
+900:
+	bBusy	:= FALSE;
+	bDone	:= FALSE;
+	
+	IF NOT bExecute THEN
+		nState		:= 0;
+		nLastState	:= nState;
+	END_IF
+
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_NciWriteToolParams">
+      <LineId Id="3" Count="64" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
