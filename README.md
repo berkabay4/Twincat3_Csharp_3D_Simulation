@@ -23,7 +23,7 @@ Thus, the X, Y, Z coordinates that the delta robot arm will move during the oper
 In order to calculate kinematics with TwinCAT, it is necessary to specify the type of system to be used.
 
 The delta robot arm to be used is seen as **"Delta Type 1"** when the documents prepared by Beckhoff company about kinematic motion are examined. 
-(You can reach the kinematic transformations booklet prepared by Beckhoff company <a href="https://download.beckhoff.com/download/document/automation/twincat3/TF5110-TF5113_TC3_Kinematic_Transformation_EN.pdf" target="_blank">**here**</a>.)
+(You can reach the kinematic transformations guide prepared by Beckhoff company <a href="https://download.beckhoff.com/download/document/automation/twincat3/TF5110-TF5113_TC3_Kinematic_Transformation_EN.pdf" target="_blank">**here**</a>.)
 
 <img src ="images/deltarobotarm-readme-03.PNG" />
 
@@ -96,14 +96,13 @@ The ACS axes must be enabled through MC_Power, to ensure that the state can reac
 
 - The necessary motor angles are calculated for the DRA to move to the selected position.
 
-- The values ​​calculated as a result of the kinematic operations are sent from TwinCAT to C# to enable the motion in the simulation.
+- The values calculated as a result of the kinematic operations are sent from TwinCAT to C# to enable the motion in the simulation.
 
 - When the processes are completed, information is given about the new material coming from TwinCAT to C# and the new material moves on the conveyor in 3D simulation.
 
 You can find the flow diagram of the system below.
 
 <img src ="images/deltarobotarm-flowchart.png" />
-
 
 
 ## Video
