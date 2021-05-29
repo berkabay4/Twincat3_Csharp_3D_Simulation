@@ -8,7 +8,7 @@
 
 
 ### Usage
-- **"OpenGL_Deneme.rar"** in this file you can find C# Codes for the simulation also you can find TwinCAT codes in **"TC3_deltarobotprojects.rar"** file.
+**"OpenGL_Deneme.rar"** in this file you can find C# Codes for the simulation also you can find TwinCAT codes in **"TC3_deltarobotprojects.rar"** file.
 
 
 
@@ -84,7 +84,25 @@ fbConfigKinGroup(
 The ACS axes must be enabled through MC_Power, to ensure that the state can reach the value KinStatus_Ready. If the ACS axes are not enabled, enable the axes and then call up FB_KinConfigGroup or FB_KinResetGroup.
 
 
+## Flow Chart
 
+- In the designed scenario; 2 different types of material coming over a conveyor line will be sent at random locations on the conveyor.
+
+- When the materials reach the position where DRA (Delta Robot Arm) will intervene, the location and type information of this material is sent from C # to TwinCAT3. (Communication between C # and TwinCAT in the system is provided by ADS protocol.)
+
+- Assisted to this information, in which box the material will go is determined in TwinCAT3.
+
+- The material is taken to the position of the specified box and during this process, kinematic calculations of DRA are made in TwinCAT3.
+
+- The necessary motor angles are calculated for the DRA to move to the selected position.
+
+- The values ​​calculated as a result of the kinematic operations are sent from TwinCAT to C# to enable the motion in the simulation.
+
+- When the processes are completed, information is given about the new material coming from TwinCAT to C# and the new material moves on the conveyor in 3D simulation.
+
+You can find the flow diagram of the system below.
+
+<img src ="images/deltarobotarm-flowchart.png" />
 
 
 
