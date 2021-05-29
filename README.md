@@ -13,7 +13,7 @@
 
 
  
-## Kinematic Analysis Calculation with TwinCAT
+## Kinematic Analysis with TwinCAT
 
 
 The kinematic calculations of the delta robot arm to be simulated in the project will be calculated with the function blocks in the TwinCAT3 program.
