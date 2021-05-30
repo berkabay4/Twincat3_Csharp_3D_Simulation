@@ -6,12 +6,8 @@
 
 - A software was implemented to perform the 3D simulation of this system. Thus, the real-time movements of the system are followed by the user through this simulation program.
 
-
 ### Usage
 **"OpenGL_Deneme.rar"** in this file you can find C# Codes for the simulation also you can find TwinCAT codes in **"TC3_deltarobotprojects.rar"** file.
-
-
-
  
 ## Kinematic Analysis with TwinCAT
 
@@ -81,8 +77,7 @@ fbConfigKinGroup(
 <img src ="images/deltarobotarm-readme-04.png" />
 
 ### Enable configuration 
-The ACS axes must be enabled through MC_Power, to ensure that the state can reach the value KinStatus_Ready. If the ACS axes are not enabled, enable the axes and then call up FB_KinConfigGroup or FB_KinResetGroup.
-
+The ACS axes must be enabled through MC_Power, to ensure that the state can reach the value **KinStatus_Ready**. If the ACS axes are not enabled, enable the axes and then call up **FB_KinConfigGroup** or **FB_KinResetGroup**.
 
 ## Flow Chart
 
@@ -90,9 +85,9 @@ The ACS axes must be enabled through MC_Power, to ensure that the state can reac
 
 - When the materials reach the position where DRA (Delta Robot Arm) will intervene, the location and type information of this material is sent from C # to TwinCAT3. (Communication between C # and TwinCAT in the system is provided by ADS protocol.)
 
-- Assisted to this information, in which box the material will go is determined in TwinCAT3.
+- Assisted to this information, in which box the material will go is selected in TwinCAT3.
 
-- The material is taken to the position of the specified box and during this process, kinematic calculations of DRA are made in TwinCAT3.
+- The material is taken to the position of the specified box and during this process, kinematic calculations of DRA are calculated in TwinCAT3.
 
 - The necessary motor angles are calculated for the DRA to move to the selected position.
 
@@ -103,7 +98,6 @@ The ACS axes must be enabled through MC_Power, to ensure that the state can reac
 You can find the flow diagram of the system below.
 
 <img src ="images/deltarobotarm-flowchart.png" />
-
 
 ## Video
 
