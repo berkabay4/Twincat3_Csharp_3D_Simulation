@@ -45,14 +45,6 @@ namespace SharpGLWinformsApplication1
 
         public int hVar;
 
-
-
-
-
-
-
-
-
         public SharpGLForm()
         {
             InitializeComponent();
@@ -64,20 +56,19 @@ namespace SharpGLWinformsApplication1
 
            try
             {
-
-
+                // Connect with TwinCAT PLC
                 tcClient = new TcAdsClient();
-                tcClient.Connect(851);
-
+                tcClient.Connect(851);  
+                
                 plcVarNames = new string[]
                 {
-                "GVL_Axis.AxisM1PosValue",              //      [0]
-                "GVL_Axis.AxisM2PosValue",              //      [1]
-                "GVL_Axis.AxisM3PosValue",              //      [2]
+                "GVL_Axis.AxisM1PosValue",             //      [0]
+                "GVL_Axis.AxisM2PosValue",             //      [1]
+                "GVL_Axis.AxisM3PosValue",             //      [2]
                 "GVL_Axis.AxisXVal",                   //      [3]
                 "GVL_Axis.AxisYVal",                   //      [4]
                 "GVL_Axis.AxisZVal",                   //      [5]
-                "GVL_Process_Deneme.bSensor",           //[6]
+                "GVL_Process_Deneme.bSensor",          //      [6]
 
                 };
 
@@ -170,10 +161,6 @@ namespace SharpGLWinformsApplication1
             tbθ3Coor.Text = (ThetaMotor[2]).ToString();
 
         }
-
-
-
-
 
         private void openGLControl_OpenGLInitialized(object sender, EventArgs e)
         {
@@ -303,14 +290,8 @@ namespace SharpGLWinformsApplication1
         {
             var fileLines = File.ReadAllLines(@"IntersectionPoints1.ngc");
             string[] StringArray = new string[3];
-            string line;
-       
-
-         
+            string line;        
         }
-
-
-
 
         private void tbθ2Coor_TextChanged(object sender, EventArgs e)
         {
@@ -325,11 +306,7 @@ namespace SharpGLWinformsApplication1
         private void btIntBoard_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Initial parameters for Motion Board successful.","Info"); //it will load C program to initial parameters for KFlop board
-        }
-
-      
-
-      
+        }  
 
         private void tbXCoor_TextChanged(object sender, EventArgs e)
         {
@@ -358,9 +335,6 @@ namespace SharpGLWinformsApplication1
                 tbθ3Coor.Text = "0";
             }
         }
-
-
-
       
 
         private void tbYCoor_TextChanged(object sender, EventArgs e)
@@ -558,23 +532,14 @@ namespace SharpGLWinformsApplication1
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
-          
-          
-          
-          
-
-          
-
-          
-
-
-
+            /////////////////        
         }
         public float Val1, Val2, Val3, Val4;
 
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
+            /////////////////
         }
 
 
@@ -610,7 +575,7 @@ namespace SharpGLWinformsApplication1
 
         private void lbθ1Coor_Click(object sender, EventArgs e)
         {
-
+            /////////////////
         }
 
         bool bSensor,DrawControl,deneme;
@@ -618,7 +583,6 @@ namespace SharpGLWinformsApplication1
 
         public void timer3_Tick(object sender, EventArgs e)
         {
-
 
 
             if (bMovementDone == false)
