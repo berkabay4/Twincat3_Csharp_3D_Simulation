@@ -7,7 +7,7 @@
 - A software was implemented to perform the 3D simulation of this system. Thus, the real-time movements of the system are followed by the user through this simulation program.
 
 ### Usage
-**"OpenGL_Deneme.rar"** in this file you can find C# Codes for the simulation also you can find TwinCAT codes in **"TC3_deltarobotprojects.rar"** file.
+**"OpenGL_Deneme"** in this file you can find C# Codes for the simulation also you can find TwinCAT codes in **"TC3_deltarobotprojects"** file.
  
 ## Kinematic Analysis with TwinCAT
 
